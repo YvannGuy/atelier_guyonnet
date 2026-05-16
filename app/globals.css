@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
+/*
+ * Tokens — source de vérité : ui-context.md
+ * Variables `--ag-*` : sémantique projet ; `@theme` : bridge vers utilitaires Tailwind.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ag-primary: #000000;
+  --ag-secondary: #d9d1c7;
+  --ag-background-light: #f9f7f2;
+  --ag-text-main: #1a1a1a;
+  --ag-text-muted: #666666;
+  --ag-on-dark: #ffffff;
+  --ag-on-dark-muted: #f9f7f2;
+  --ag-border: color-mix(in srgb, var(--ag-text-main) 12%, transparent);
+  /* Fond hero sans photo — bruns chauds (atelier / bois), cf. ui-context.md */
+  --ag-hero-base: #141210;
+  --ag-hero-mid: #1f1a16;
+  --ag-hero-warm: #352b24;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-primary: var(--ag-primary);
+  --color-secondary: var(--ag-secondary);
+  --color-background: var(--ag-background-light);
+  --color-foreground: var(--ag-text-main);
+  --color-muted: var(--ag-text-muted);
+  --color-on-dark: var(--ag-on-dark);
+  --color-on-dark-muted: var(--ag-on-dark-muted);
+  --color-border: var(--ag-border);
+  --color-hero-base: var(--ag-hero-base);
+  --color-hero-mid: var(--ag-hero-mid);
+  --color-hero-warm: var(--ag-hero-warm);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, "Times New Roman", serif;
+
+  /* Radius max. faible — esprit atelier (ui-context) */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply min-h-full bg-background text-foreground font-sans antialiased;
+}
+
+/* Ancres : dégagement sous le header fixe ; défilement doux si l’utilisateur l’accepte. */
+main > section[id] {
+  scroll-margin-top: 5.75rem;
+}
+
+html {
+  overflow-x: clip;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
