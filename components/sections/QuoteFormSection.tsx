@@ -1,10 +1,14 @@
 "use client";
 
-import type { FormEvent } from "react";
+import { useActionState, useEffect, useRef } from "react";
 
 import Link from "next/link";
 
+import { submitQuoteRequest, type QuoteFormState } from "@/app/actions/submit-quote";
+import { QUOTE_BUDGETS, QUOTE_DELAYS, QUOTE_PROJECT_TYPES } from "@/lib/constants/quote-form";
 import { siteConfig } from "@/lib/constants/site";
+
+const initialFormState: QuoteFormState = { status: "idle" };
 
 const hintList = [
   "le type de meuble ou rangement souhaité ;",
@@ -14,48 +18,25 @@ const hintList = [
   "votre délai idéal.",
 ] as const;
 
-const projectTypes = [
-  { value: "dressing", label: "Dressing sur mesure" },
-  { value: "placard", label: "Placard intégré" },
-  { value: "bibliotheque", label: "Bibliothèque sur mesure" },
-  { value: "meuble-tv", label: "Meuble TV / meuble mural" },
-  { value: "studio", label: "Optimisation de studio" },
-  { value: "pente-recoin", label: "Rangement sous pente / recoin" },
-  { value: "autre", label: "Autre projet" },
-] as const;
-
-const budgets = [
-  { value: "moins-1500", label: "Moins de 1 500 €" },
-  { value: "1500-3000", label: "1 500 € – 3 000 €" },
-  { value: "3000-5000", label: "3 000 € – 5 000 €" },
-  { value: "5000-8000", label: "5 000 € – 8 000 €" },
-  { value: "8000-plus", label: "8 000 € et plus" },
-  { value: "a-definir", label: "À définir" },
-] as const;
-
-const delays = [
-  { value: "asap", label: "Dès que possible" },
-  { value: "month", label: "Dans le mois" },
-  { value: "2-3-mois", label: "Sous 2 à 3 mois" },
-  { value: "flexible", label: "Je suis flexible" },
-] as const;
-
 const fieldClass =
   "min-w-0 max-w-full rounded-sm border border-border bg-background px-3 py-2.5 font-sans text-sm text-foreground shadow-none outline-none transition-[color,box-shadow] placeholder:text-muted/80 focus-visible:border-foreground/25 focus-visible:ring-2 focus-visible:ring-foreground/10 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
+const statusBoxBase =
+  "rounded-sm border px-4 py-3 font-sans text-sm leading-relaxed";
+
 /**
- * Formulaire de demande — UI uniquement.
- *
- * Prochain branchement (hors périmètre actuel) :
- * - Server Action (`app/actions/contact.ts`) ou route handler `app/api/quote/route.ts`
- * - service mail (ex. Resend) + validation (Zod) + honeypot / rate limit si besoin
- * - pour les pièces jointes : upload vers stockage (Vercel Blob, S3) ou liens, jamais en clair dans l’email
+ * Formulaire de demande de devis — envoi via Resend (Server Action `submitQuoteRequest`).
+ * Clé `RESEND_API_KEY` requise côté serveur. Les pièces jointes ne sont pas encore prises en charge.
  */
 export function QuoteFormSection() {
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    // Envoi intentionnellement non branché — préparer l’intégration côté serveur ici.
-  }
+  const formRef = useRef<HTMLFormElement>(null);
+  const [state, formAction, isPending] = useActionState(submitQuoteRequest, initialFormState);
+
+  useEffect(() => {
+    if (state.status === "success") {
+      formRef.current?.reset();
+    }
+  }, [state]);
 
   return (
     <section
@@ -131,7 +112,26 @@ export function QuoteFormSection() {
           </div>
 
           <div className="min-w-0 rounded-md border border-border bg-background p-6 sm:p-8">
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="mb-6 space-y-3" aria-live="polite">
+              {state.status === "success" ? (
+                <p
+                  role="status"
+                  className={`${statusBoxBase} border-border bg-secondary/30 text-foreground`}
+                >
+                  Votre demande a bien été envoyée. Nous vous répondrons sous 24 à 48h ouvrées.
+                </p>
+              ) : null}
+              {state.status === "error" ? (
+                <p
+                  role="alert"
+                  className={`${statusBoxBase} border-foreground/20 bg-background text-foreground`}
+                >
+                  {state.message}
+                </p>
+              ) : null}
+            </div>
+
+            <form ref={formRef} className="space-y-6" action={formAction}>
               <div>
                 <label htmlFor="quote-nom" className="mb-2 block font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
                   Nom
@@ -142,6 +142,7 @@ export function QuoteFormSection() {
                   type="text"
                   autoComplete="name"
                   required
+                  disabled={isPending}
                   className={fieldClass}
                 />
               </div>
@@ -156,6 +157,7 @@ export function QuoteFormSection() {
                   type="email"
                   autoComplete="email"
                   required
+                  disabled={isPending}
                   className={fieldClass}
                 />
               </div>
@@ -170,6 +172,7 @@ export function QuoteFormSection() {
                   type="tel"
                   autoComplete="tel"
                   required
+                  disabled={isPending}
                   className={fieldClass}
                 />
               </div>
@@ -184,6 +187,7 @@ export function QuoteFormSection() {
                   type="text"
                   autoComplete="address-level2"
                   placeholder="Paris, Boulogne-Billancourt, Saint-Denis…"
+                  disabled={isPending}
                   className={fieldClass}
                 />
               </div>
@@ -192,11 +196,11 @@ export function QuoteFormSection() {
                 <label htmlFor="quote-type" className="mb-2 block font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
                   Type de projet
                 </label>
-                <select id="quote-type" name="typeProjet" required className={fieldClass} defaultValue="">
+                <select id="quote-type" name="typeProjet" required className={fieldClass} defaultValue="" disabled={isPending}>
                   <option value="" disabled>
                     Sélectionner une option
                   </option>
-                  {projectTypes.map((opt) => (
+                  {QUOTE_PROJECT_TYPES.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
                     </option>
@@ -213,6 +217,7 @@ export function QuoteFormSection() {
                   name="dimensions"
                   type="text"
                   placeholder="ex. largeur 240 cm, hauteur 250 cm"
+                  disabled={isPending}
                   className={fieldClass}
                 />
               </div>
@@ -221,11 +226,11 @@ export function QuoteFormSection() {
                 <label htmlFor="quote-budget" className="mb-2 block font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
                   Budget estimé
                 </label>
-                <select id="quote-budget" name="budget" required className={fieldClass} defaultValue="">
+                <select id="quote-budget" name="budget" required className={fieldClass} defaultValue="" disabled={isPending}>
                   <option value="" disabled>
                     Sélectionner une fourchette
                   </option>
-                  {budgets.map((opt) => (
+                  {QUOTE_BUDGETS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
                     </option>
@@ -237,11 +242,11 @@ export function QuoteFormSection() {
                 <label htmlFor="quote-delai" className="mb-2 block font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
                   Délai souhaité
                 </label>
-                <select id="quote-delai" name="delai" required className={fieldClass} defaultValue="">
+                <select id="quote-delai" name="delai" required className={fieldClass} defaultValue="" disabled={isPending}>
                   <option value="" disabled>
                     Sélectionner une option
                   </option>
-                  {delays.map((opt) => (
+                  {QUOTE_DELAYS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
                     </option>
@@ -259,34 +264,31 @@ export function QuoteFormSection() {
                   rows={6}
                   required
                   placeholder="Décrivez votre espace, votre besoin, les contraintes, les matériaux souhaités…"
+                  disabled={isPending}
                   className={`${fieldClass} min-h-36 resize-y`}
                 />
               </div>
 
-              <div>
-                <label htmlFor="quote-photos" className="mb-2 block font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
-                  Photos de l’espace (optionnel)
-                </label>
-                <input
-                  id="quote-photos"
-                  name="photos"
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  aria-describedby="quote-photos-hint"
-                  className="block w-full cursor-pointer font-sans text-sm text-muted file:mr-4 file:cursor-pointer file:border file:border-border file:bg-secondary/30 file:px-3 file:py-2 file:font-sans file:text-xs file:font-medium file:uppercase file:tracking-[0.12em] file:text-foreground hover:file:bg-secondary/50"
-                />
-                <p id="quote-photos-hint" className="mt-2 font-sans text-xs leading-relaxed text-muted">
-                  Vous pourrez ajouter des photos de l’espace pour faciliter l’étude du projet.
-                  L’envoi sécurisé des fichiers sera activé lors du branchement serveur.
+              <div className="rounded-md border border-border bg-secondary/20 px-4 py-4 sm:px-5 sm:py-5">
+                <p className="font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
+                  Photos de l’espace
+                </p>
+                <p className="mt-3 font-sans text-sm leading-relaxed text-foreground md:text-base">
+                  L’ajout de photos sera disponible prochainement. Pour l’instant, vous pourrez nous les
+                  transmettre par e-mail après le premier échange.
+                </p>
+                <p className="mt-3 font-sans text-sm leading-relaxed text-muted">
+                  Des photos de l’espace permettent de mieux comprendre les dimensions, les contraintes et
+                  les possibilités d’aménagement.
                 </p>
               </div>
 
               <button
                 type="submit"
-                className="focus-visible:ring-primary/30 min-h-12 w-full touch-manipulation rounded-sm bg-primary px-6 py-4 font-sans text-xs font-medium uppercase tracking-[0.18em] text-on-dark transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:w-auto"
+                disabled={isPending}
+                className="focus-visible:ring-primary/30 min-h-12 w-full touch-manipulation rounded-sm bg-primary px-6 py-4 font-sans text-xs font-medium uppercase tracking-[0.18em] text-on-dark transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
-                {"Envoyer ma\u00A0demande"}
+                {isPending ? "Envoi en cours…" : "Envoyer ma\u00A0demande"}
               </button>
 
               <p className="font-sans text-xs leading-relaxed text-muted">

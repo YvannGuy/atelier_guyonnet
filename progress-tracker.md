@@ -2,24 +2,94 @@
 
 ## Phase actuelle
 
-**Placeholders visuels Unsplash (fichiers locaux)** : images dans `public/images/placeholders/`, métadonnées centralisées dans `lib/constants/placeholder-images.ts`, rendu via **`next/image`** (hero, inspirations, avant/après, à propos). Aucun backend ni nouvelle dépendance ; libellés honnêtes « inspiration / illustration ».
+**Correctifs UX** : bloc « Photos » clarifié (aucun upload, copy premium) ; **ServiceAreaSection** plus concrète + schéma éditoriel Paris / couronnes ; **BeforeAfterSlider** interactif (`input range` natif, sans lib). Styles curseur dans `globals.css`. **Aucune nouvelle dépendance.** L’envoi devis via Resend (lot précédent) est **inchangé** — pas de branchement upload ni nouveau backend.
 
 ## Objectif court terme
 
-**Remplacer** ces visuels par des médias Atelier Guyonnet ; **finaliser** le juridique ; **brancher** le formulaire.
+**Upload photos** ou envoi par lien ; affiner **Resend** prod ; **remplacer** placeholders visuels.
 
 ## Prochaine étape
 
-1. **Swap assets** : nouveaux fichiers dans `placeholders/` ou chemins définitifs via `placeholder-images.ts`.
-2. Compléter **mentions / politique** et coordonnées réelles.
-3. **Envoi formulaire** : Server Action ou API + email (+ mise à jour politique).
+1. Activer l’envoi de fichiers ou processus e-mail pour les photos.
+2. Finaliser domaine / `RESEND_FROM_EMAIL`.
+3. Itérer sur le schéma zone d’intervention si retours terrain.
 
 ## Questions ouvertes
 
-- **Transport du formulaire** : Server Action + Resend (ou autre) — à trancher.
-- **Stockage fichiers** : Blob, lien cloud, ou pas d’upload au MVP.
-- **Contenu juridique** : finaliser mentions, politique, coordonnées téléphoniques réelles.
+- **Stockage fichiers** : Blob, lien cloud, ou e-mail uniquement.
+- **Contenu juridique** : affiner avec un professionnel si besoin.
 - **Tracking** : analytics ou non au MVP.
+
+## Dernière livraison — UX formulaire photos, zone d’intervention, slider avant/après (2026-05-18)
+
+### Fait
+
+- **`QuoteFormSection`** : bloc « Photos de l’espace » — bordure fine, fond `bg-secondary/20`, texte imposé + phrase optionnelle sur l’utilité des photos ; pas de `input file`.
+- **`ServiceAreaSection`** : encart **Déplacement sur rendez-vous** (Paris central, projet, priorité agencement, confirmation après premier échange) ; 3 lignes Paris intra / petite couronne / IdF ; tags départements conservés ; figure schéma cercles concentriques (pas carte).
+- **`BeforeAfterSlider`** (`components/ui/`, client) : `useState` + `clip-path` sur la couche « après », ligne + poignée synchronisées, `input type="range"` clavier/souris/tactile, libellés Avant / Après, mention « Illustration d’ambiance… ».
+- **`BeforeAfterSection`** (Server) : compose le slider ; images depuis `placeholderImages` ; disclaimer renforcé dans l’intro.
+- **`app/globals.css`** : styles `.quote-slider-range` (tokens `--ag-*`).
+
+### Validations
+
+- `npm run build` : **OK**.
+
+### Limites
+
+- Slider « après » : `alt` vide sur l’image découpée ; descriptif dans `sr-only` + alt « avant ».
+- Schéma zone : indicatif, non géolocalisé.
+
+### Fichiers modifiés / créés
+
+- `components/sections/QuoteFormSection.tsx`
+- `components/sections/ServiceAreaSection.tsx`
+- `components/sections/BeforeAfterSection.tsx`
+- `components/ui/BeforeAfterSlider.tsx` (créé)
+- `app/globals.css`
+- `progress-tracker.md`
+
+### Prochaine étape notée (non implémentée)
+
+**Photos** (upload ou workflow e-mail) et/ou **finalisation légale** selon priorité produit.
+
+---
+
+## Dernière livraison — Formulaire devis + Resend (2026-05-18)
+
+### Fait
+
+- **`npm install resend`**.
+- **`.env.example`** : `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (optionnel).
+- **`lib/constants/quote-form.ts`** : listes déroulantes partagées avec la validation serveur.
+- **`app/actions/submit-quote.ts`** : validation des champs, corps d’e-mail texte, `replyTo` = e-mail du client, sujet demandé, destinataire `contact@atelierguyonnet.com`, gestion erreur Resend / config manquante.
+- **`QuoteFormSection`** : `useActionState`, message succès / erreur (`role="status"` / `role="alert"`), bouton « Envoi en cours… », champs désactivés pendant l’envoi, zone photos remplacée par le texte imposé.
+- **`app/politique-de-confidentialite/page.tsx`** : formulaire, Resend, absence de stockage BDD — ajustements honnêtes (indicatif, à valider juridiquement).
+
+### Validations
+
+- `npm run build` : **OK**.
+
+### Limites
+
+- **Expéditeur** : sans `RESEND_FROM_EMAIL` vérifié, utilisation de l’adresse de test Resend (`onboarding@resend.dev`) — à adapter avant production.
+- **Pas de pièces jointes** ; pas de anti-spam avancé (rate limit, honeypot) — évolutions possibles.
+- **Politique de confidentialité** : texte mis à jour de bonne foi, **non substitut** à un avis juridique.
+
+### Fichiers touchés
+
+- `package.json`, `package-lock.json`
+- `.env.example`
+- `lib/constants/quote-form.ts`
+- `app/actions/submit-quote.ts`
+- `components/sections/QuoteFormSection.tsx`
+- `app/politique-de-confidentialite/page.tsx`
+- `progress-tracker.md`
+
+### Prochaine étape notée (non implémentée)
+
+**Upload photos** ou parcours d’envoi sécurisé des fichiers + renforcement anti-abus.
+
+---
 
 ## Dernière livraison — Placeholders Unsplash locaux (2026-05-16)
 
@@ -206,3 +276,5 @@ Après validation visuelle : **remplacer progressivement les placeholders visuel
 | 2026-05-16 | **README** `public/images/` + vérif chemins visuels, build OK |
 | 2026-05-16 | **Pages légales** `/mentions-legales` + `/politique-de-confidentialite`, build OK |
 | 2026-05-16 | **Placeholders Unsplash** locaux + `placeholder-images.ts` + `next/image`, build OK |
+| 2026-05-18 | **Formulaire devis** + Resend (Server Action), build OK |
+| 2026-05-18 | **UX** photos + zone intervention + slider avant/après, build OK |

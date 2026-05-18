@@ -9,6 +9,21 @@ const zones = [
   "Val-d’Oise",
 ] as const;
 
+const interventionLevels = [
+  {
+    title: "Paris intra-muros",
+    detail: "Déplacements pour prises de cote et suivis selon calendrier convenu.",
+  },
+  {
+    title: "Petite couronne",
+    detail: "Projets proches de Paris, avec organisation du rendez-vous à l’avance.",
+  },
+  {
+    title: "Île-de-France selon projet",
+    detail: "Étendue selon le type d’agencement, les délais et la charge de l’atelier.",
+  },
+] as const;
+
 export function ServiceAreaSection() {
   return (
     <section
@@ -43,49 +58,97 @@ export function ServiceAreaSection() {
                 </span>
               ))}
             </div>
-
-            <p className="mt-8 max-w-xl font-sans text-sm leading-relaxed text-muted">
-              Les déplacements sont confirmés selon la localisation, la nature du projet et les
-              disponibilités de l’atelier.
-            </p>
           </div>
 
           <aside className="relative min-w-0 rounded-md border border-border bg-secondary/20 p-6 sm:p-8">
             <p className="font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
-              Repérage indicatif
+              Déplacement sur rendez-vous
             </p>
-            <div className="relative mt-6 aspect-4/3 overflow-hidden rounded-sm border border-border bg-background">
-              <div
-                className="absolute inset-0 bg-linear-to-br from-secondary/50 via-background to-secondary/30"
-                aria-hidden
-              />
-              <div
-                className="pointer-events-none absolute inset-6 rounded-sm border border-dashed border-border"
-                aria-hidden
-              />
-              <div
-                className="pointer-events-none absolute left-1/2 top-8 bottom-8 w-px -translate-x-1/2 bg-border"
-                aria-hidden
-              />
-              <div
-                className="pointer-events-none absolute left-8 right-8 top-1/2 h-px -translate-y-1/2 bg-border"
-                aria-hidden
-              />
-              <span
-                className="pointer-events-none absolute left-1/3 top-1/3 h-2 w-2 rounded-full border border-hero-warm bg-secondary/40"
-                aria-hidden
-              />
-              <span
-                className="pointer-events-none absolute right-1/4 bottom-1/3 h-2 w-2 rounded-full border border-foreground/25 bg-background"
-                aria-hidden
-              />
-              <p className="absolute bottom-3 left-4 font-sans text-[10px] uppercase tracking-[0.16em] text-muted">
-                Schéma non géolocalisé
+            <div className="mt-4 space-y-3 font-sans text-sm leading-relaxed text-muted md:text-base">
+              <p>
+                <strong className="font-medium text-foreground">Paris</strong> comme point central
+                pour organiser les rendez-vous et les allers-retours.
+              </p>
+              <p>
+                L’intervention est ajustée selon la{" "}
+                <strong className="font-medium text-foreground">nature du projet</strong> et le temps
+                nécessaire sur place.
+              </p>
+              <p>
+                <strong className="font-medium text-foreground">Priorité aux agencements sur mesure</strong>{" "}
+                (dressing, placard intégré, bibliothèque, rangements).
+              </p>
+              <p className="text-foreground/90">
+                Chaque déplacement est <strong className="font-medium">confirmé après un premier échange</strong>{" "}
+                (besoin, localisation, créneaux).
               </p>
             </div>
-            <p className="mt-4 font-sans text-xs leading-relaxed text-muted">
-              Illustration abstraite — pas de carte réelle ni de données de navigation.
-            </p>
+
+            <ul className="mt-8 space-y-3 border-t border-border pt-8">
+              {interventionLevels.map((item) => (
+                <li key={item.title} className="flex gap-3">
+                  <span className="mt-2 h-px w-6 shrink-0 bg-border" aria-hidden />
+                  <div>
+                    <p className="font-sans text-sm font-medium text-foreground">{item.title}</p>
+                    <p className="mt-1 font-sans text-xs leading-relaxed text-muted sm:text-sm">
+                      {item.detail}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <figure className="relative mt-8 overflow-hidden rounded-sm border border-border bg-background px-4 pb-6 pt-8 sm:px-6 sm:pt-10">
+              <figcaption className="sr-only">
+                Schéma stylisé : cercles concentriques autour de Paris, sans carte géographique réelle.
+              </figcaption>
+              <div className="relative mx-auto aspect-square max-w-[260px]">
+                <div
+                  className="absolute inset-0 rounded-full border border-border/40"
+                  aria-hidden
+                />
+                <div
+                  className="absolute inset-[14%] rounded-full border border-dashed border-border/60"
+                  aria-hidden
+                />
+                <div
+                  className="absolute inset-[28%] rounded-full border border-border/50"
+                  aria-hidden
+                />
+                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5">
+                  <span
+                    className="h-2 w-2 rounded-full border border-foreground/30 bg-foreground/85"
+                    aria-hidden
+                  />
+                  <span className="font-sans text-[10px] font-medium uppercase tracking-[0.22em] text-foreground">
+                    Paris
+                  </span>
+                </div>
+                <span
+                  className="absolute left-[8%] top-[42%] font-sans text-[9px] uppercase tracking-[0.14em] text-muted sm:text-[10px]"
+                  aria-hidden
+                >
+                  Petite couronne
+                </span>
+                <span
+                  className="absolute right-[6%] top-[30%] max-w-[5.5rem] text-right font-sans text-[9px] uppercase leading-snug tracking-[0.12em] text-muted sm:text-[10px]"
+                  aria-hidden
+                >
+                  IdF
+                  <br />
+                  selon projet
+                </span>
+                <span
+                  className="absolute bottom-[12%] left-1/2 -translate-x-1/2 font-sans text-[9px] uppercase tracking-[0.14em] text-muted sm:text-[10px]"
+                  aria-hidden
+                >
+                  Rayon indicatif
+                </span>
+              </div>
+              <p className="mt-4 text-center font-sans text-[10px] uppercase tracking-[0.16em] text-muted">
+                Schéma éditorial — pas de carte ni de géolocalisation
+              </p>
+            </figure>
           </aside>
         </div>
       </div>

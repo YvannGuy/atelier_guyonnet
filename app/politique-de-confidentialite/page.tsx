@@ -69,15 +69,14 @@ export default function PolitiqueConfidentialitePage() {
                 explicitement documenté.
               </p>
               <p>
-                <strong className="font-medium text-foreground">Formulaire de contact :</strong> lorsque
-                le formulaire sera connecté à un service d’envoi (e-mail ou équivalent), les données
-                que vous saisirez (identité, coordonnées, contenu du message, pièces jointes le cas
-                échéant) pourront être transmises et stockées selon les modalités qui seront alors
-                décrites ici.{" "}
+                <strong className="font-medium text-foreground">Formulaire de devis :</strong> lorsque
+                vous soumettez le formulaire « Parlez-nous de votre projet », les informations saisies
+                (identité, coordonnées, type de projet, budget, délai, message, etc.) sont transmises par
+                e-mail à l’éditeur via le prestataire technique <strong className="font-medium text-foreground">Resend</strong>.{" "}
                 <strong className="font-medium text-foreground">
-                  À la date de rédaction de cette page, le formulaire n’est pas relié à un serveur : les
-                  données ne sont pas envoyées à l’éditeur par ce biais.
-                </strong>
+                  Aucune copie structurée n’est conservée dans une base de données sur ce site.
+                </strong>{" "}
+                Les pièces jointes / photos ne sont pas encore prises en charge par le formulaire.
               </p>
             </div>
           </section>
@@ -87,10 +86,10 @@ export default function PolitiqueConfidentialitePage() {
               Finalités et bases légales
             </h2>
             <p className="mt-4 font-sans text-sm leading-relaxed text-muted sm:text-base">
-              Les traitements futurs liés à la prise de contact auront pour finalité de répondre aux
-              demandes des personnes concernées. La base légale pourra être, selon les cas, l’exécution
-              de mesures précontractuelles ou le consentement lorsqu’il sera recueilli de manière
-              explicite. Les précisions seront complétées lors du branchement effectif du formulaire.
+              Le traitement de vos données transmises via le formulaire de devis a pour finalité de
+              traiter votre demande et d’échanger avec vous en vue d’une éventuelle proposition (contact
+              précontractuel). La base légale est, selon le contexte, l’exécution de mesures
+              précontractuelles ou votre consentement implicite au moment de l’envoi du formulaire.
             </p>
           </section>
 
@@ -99,9 +98,10 @@ export default function PolitiqueConfidentialitePage() {
               Durée de conservation
             </h2>
             <p className="mt-4 font-sans text-sm leading-relaxed text-muted sm:text-base">
-              Les durées de conservation seront fixées proportionnellement aux finalités (ex. gestion
-              des demandes commerciales, obligations comptables ou fiscales le cas échéant) et
-              précisées ici après mise en œuvre des outils concernés.
+              Les courriers électroniques reçus via le formulaire sont conservés le temps nécessaire au
+              traitement de la demande, puis selon les obligations légales (ex. tenue d’une comptabilité)
+              le cas échéant. Aucun délai unique ne s’applique sans contexte métier précis — adaptez ce
+              paragraphe avec votre conseil si besoin.
             </p>
           </section>
 
@@ -110,9 +110,17 @@ export default function PolitiqueConfidentialitePage() {
               Destinataires et transferts
             </h2>
             <p className="mt-4 font-sans text-sm leading-relaxed text-muted sm:text-base">
-              Les données personnelles ne sont pas vendues. Les sous-traitants éventuels (hébergeur,
-              prestataire d’envoi d’e-mails, etc.) seront identifiés et encadrés par des contrats
-              conformes au RGPD lorsque ces services seront mis en œuvre.
+              Les données personnelles ne sont pas vendues. L’envoi des formulaires passe par le service
+              <strong className="font-medium text-foreground"> Resend</strong> (transit et distribution des e-mails), sous-traitant dont la politique et la localisation des traitements sont précisées sur{" "}
+              <a
+                href="https://resend.com/legal"
+                className="text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
+                rel="noopener noreferrer"
+              >
+                resend.com/legal
+              </a>
+              . D’autres sous-traitants (hébergeur du site, etc.) peuvent s’ajouter : liste à tenir à
+              jour par l’éditeur.
             </p>
           </section>
 

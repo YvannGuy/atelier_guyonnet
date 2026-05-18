@@ -60,3 +60,52 @@ html {
     scroll-behavior: smooth;
   }
 }
+
+/* Slider avant/après — `input type="range"` (sans librairie). */
+.quote-slider-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: transparent;
+}
+
+.quote-slider-range:focus {
+  outline: none;
+}
+
+.quote-slider-range:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ag-text-main) 25%, transparent);
+  outline-offset: 2px;
+}
+
+.quote-slider-range::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--ag-border);
+}
+
+.quote-slider-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6.5px;
+  border-radius: 9999px;
+  border: 1px solid var(--ag-border);
+  background: var(--ag-background-light);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ag-text-main) 12%, transparent);
+}
+
+.quote-slider-range::-moz-range-track {
+  height: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--ag-border);
+}
+
+.quote-slider-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  border: 1px solid var(--ag-border);
+  background: var(--ag-background-light);
+}
