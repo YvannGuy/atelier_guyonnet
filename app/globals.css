@@ -17,6 +17,8 @@
   --ag-hero-base: #141210;
   --ag-hero-mid: #1f1a16;
   --ag-hero-warm: #352b24;
+  --ag-whatsapp: #25d366;
+  --ag-whatsapp-hover: #20bd5a;
 }
 
 @theme inline {
@@ -31,6 +33,8 @@
   --color-hero-base: var(--ag-hero-base);
   --color-hero-mid: var(--ag-hero-mid);
   --color-hero-warm: var(--ag-hero-warm);
+  --color-whatsapp: var(--ag-whatsapp);
+  --color-whatsapp-hover: var(--ag-whatsapp-hover);
 
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-playfair), ui-serif, Georgia, "Times New Roman", serif;

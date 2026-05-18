@@ -10,23 +10,27 @@ import {
   type QuoteDelayValue,
   type QuoteProjectTypeValue,
 } from "@/lib/constants/quote-form";
+import { siteConfig } from "@/lib/constants/site";
 
-const QUOTE_TO = "contact@atelierguyonnet.com";
 const QUOTE_SUBJECT = "Nouvelle demande de devis — Atelier Guyonnet";
+
+const GENERIC_ERROR_MESSAGE =
+  "Une erreur est survenue. Vous pouvez réessayer ou nous écrire directement à contact@atelierguyonnet.com.";
 
 const projectValues = new Set<string>(QUOTE_PROJECT_TYPES.map((o) => o.value));
 const budgetValues = new Set<string>(QUOTE_BUDGETS.map((o) => o.value));
 const delayValues = new Set<string>(QUOTE_DELAYS.map((o) => o.value));
 
-function labelFor(
-  list: readonly { value: string; label: string }[],
-  value: string,
-): string {
+function labelFor(list: readonly { value: string; label: string }[], value: string): string {
   return list.find((o) => o.value === value)?.label ?? value;
 }
 
 function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function quoteRecipient(): string {
+  return process.env.QUOTE_FORM_RECIPIENT?.trim() || siteConfig.contactEmail;
 }
 
 export type QuoteFormState =
@@ -42,17 +46,14 @@ const maxLens = {
   telephone: 40,
 } as const;
 
-export async function submitQuoteRequest(
+export async function sendQuoteRequest(
   _prevState: QuoteFormState,
   formData: FormData,
 ): Promise<QuoteFormState> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey?.trim()) {
-    return {
-      status: "error",
-      message:
-        "L’envoi d’email n’est pas configuré sur le serveur. Réessayez plus tard ou écrivez-nous directement à contact@atelierguyonnet.com.",
-    };
+    console.error("[send-quote-request] RESEND_API_KEY is missing");
+    return { status: "error", message: GENERIC_ERROR_MESSAGE };
   }
 
   const nom = String(formData.get("nom") ?? "").trim();
@@ -119,38 +120,29 @@ export async function submitQuoteRequest(
     message,
     "",
     "---",
-    "Ne pas répondre directement à ce message automatisé : utiliser « Répondre » pour joindre le client.",
+    "Répondre à ce message pour joindre directement le client (reply-to configuré).",
   ].join("\n");
 
   const from =
-    process.env.RESEND_FROM_EMAIL?.trim() ||
-    "Atelier Guyonnet <onboarding@resend.dev>";
+    process.env.RESEND_FROM_EMAIL?.trim() || `${siteConfig.name} <onboarding@resend.dev>`;
 
   try {
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
       from,
-      to: QUOTE_TO,
+      to: quoteRecipient(),
       replyTo: email,
       subject: QUOTE_SUBJECT,
       text: bodyText,
     });
 
     if (error) {
-      console.error("[submit-quote] Resend error:", error);
-      return {
-        status: "error",
-        message:
-          "L’envoi a échoué. Réessayez dans quelques instants ou contactez-nous par e-mail à contact@atelierguyonnet.com.",
-      };
+      console.error("[send-quote-request] Resend error:", error);
+      return { status: "error", message: GENERIC_ERROR_MESSAGE };
     }
   } catch (e) {
-    console.error("[submit-quote]", e);
-    return {
-      status: "error",
-      message:
-        "Une erreur technique est survenue. Réessayez plus tard ou écrivez-nous à contact@atelierguyonnet.com.",
-    };
+    console.error("[send-quote-request]", e);
+    return { status: "error", message: GENERIC_ERROR_MESSAGE };
   }
 
   return { status: "success" };

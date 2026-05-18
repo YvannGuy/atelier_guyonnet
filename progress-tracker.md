@@ -2,23 +2,53 @@
 
 ## Phase actuelle
 
-**Pages services SEO** : **six** routes + **hub** **`/agencement-sur-mesure-ile-de-france`** + **six pages zones** (**`/zones/paris`**, **`/zones/boulogne-billancourt`**, **`/zones/neuilly-sur-seine`**, **`/zones/levallois-perret`**, **`/zones/issy-les-moulineaux`**, **`/zones/vincennes`**). **Sitemap** : home + 6 services + hub + 6 zones + légal.
+**Pages services SEO** : **six** routes + **hub** **`/agencement-sur-mesure-ile-de-france`** + **six pages zones**. **Formulaire devis** : envoi e-mail via **Resend** (Server Action, sans stockage ni upload). **Sitemap** : home + 6 services + hub + 6 zones + légal.
 
 ## Objectif court terme
 
-**Pause pages zones** — prioriser formulaire Resend, Google Business Profile et déploiement Vercel.
+**Google Business Profile** et **déploiement Vercel** (`NEXT_PUBLIC_SITE_URL`, `RESEND_API_KEY`, `QUOTE_FORM_RECIPIENT` en prod).
 
 ## Prochaine étape
 
-1. **Pause** sur les nouvelles pages **`/zones/*`** (calendrier `seo-pages.ts` en attente).
-2. Brancher le **formulaire Resend** (ou solution e-mail retenue).
-3. Préparer **Google Business Profile** et **déploiement Vercel** (`NEXT_PUBLIC_SITE_URL`, env prod).
+1. Configurer **Resend** en production (domaine vérifié, `RESEND_FROM_EMAIL` si besoin).
+2. Déployer sur **Vercel** avec les variables d’environnement.
+3. Préparer **Google Business Profile**.
 
 ## Questions ouvertes
 
-- **Stockage fichiers** : Blob, lien cloud, ou e-mail uniquement.
+- **Stockage fichiers** : Blob, lien cloud, ou e-mail uniquement (upload photo non géré au MVP).
 - **Contenu juridique** : affiner avec un professionnel si besoin.
 - **Tracking** : analytics ou non au MVP.
+
+## Dernière livraison — Formulaire devis Resend (2026-05-16)
+
+### Fait
+
+- **`app/actions/send-quote-request.ts`** : Server Action `sendQuoteRequest` — validation serveur légère (nom, email, téléphone, type, budget, délai, message), envoi Resend texte, `replyTo` client, destinataire via **`QUOTE_FORM_RECIPIENT`** (fallback `siteConfig.contactEmail`), sujet « Nouvelle demande de devis — Atelier Guyonnet », clé **`RESEND_API_KEY`** jamais exposée côté client.
+- **`components/sections/QuoteFormSection.tsx`** : branché sur `useActionState`, états **envoi en cours** / **succès** / **erreur**, bouton désactivé pendant l’envoi, messages imposés (succès 24–48h ouvrées ; erreur générique avec e-mail de contact).
+- **`.env.example`** : `RESEND_API_KEY=`, `QUOTE_FORM_RECIPIENT=contact@atelierguyonnet.com`.
+- **Package** : `resend` déjà présent dans `package.json`.
+
+### Validations
+
+- `npm run build` : **OK**.
+- Pas de DB, pas d’upload photo, pas de stockage des demandes.
+
+### Limites
+
+- **`RESEND_FROM_EMAIL`** optionnel (non documenté dans `.env.example`) — en prod, domaine Resend à vérifier ; fallback `onboarding@resend.dev` pour dev.
+- Pas de rate limiting / captcha sur le formulaire.
+
+### Fichiers créés / modifiés
+
+- `app/actions/send-quote-request.ts` (remplace `submit-quote.ts`)
+- `components/sections/QuoteFormSection.tsx`, `.env.example`, `progress-tracker.md`
+
+### Prochaine étape recommandée
+
+**Déploiement Vercel** + **Google Business Profile** ; pause pages zones.
+
+---
 
 ## Dernière livraison — Page zone `/zones/vincennes` (2026-05-16)
 

@@ -4,7 +4,7 @@ import { useActionState, useEffect, useRef } from "react";
 
 import Link from "next/link";
 
-import { submitQuoteRequest, type QuoteFormState } from "@/app/actions/submit-quote";
+import { sendQuoteRequest, type QuoteFormState } from "@/app/actions/send-quote-request";
 import { QUOTE_BUDGETS, QUOTE_DELAYS, QUOTE_PROJECT_TYPES } from "@/lib/constants/quote-form";
 import { siteConfig } from "@/lib/constants/site";
 
@@ -19,18 +19,21 @@ const hintList = [
 ] as const;
 
 const fieldClass =
-  "min-w-0 max-w-full rounded-sm border border-border bg-background px-3 py-2.5 font-sans text-sm text-foreground shadow-none outline-none transition-[color,box-shadow] placeholder:text-muted/80 focus-visible:border-foreground/25 focus-visible:ring-2 focus-visible:ring-foreground/10 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "min-w-0 max-w-full rounded-sm border border-border bg-background px-3 py-2.5 font-sans text-sm text-foreground shadow-none outline-none transition-colors placeholder:text-muted/80 focus-visible:border-foreground/25 focus-visible:ring-2 focus-visible:ring-foreground/10 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+const focusRingClass =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 const statusBoxBase =
   "rounded-sm border px-4 py-3 font-sans text-sm leading-relaxed";
 
 /**
- * Formulaire de demande de devis — envoi via Resend (Server Action `submitQuoteRequest`).
+ * Formulaire de demande de devis — envoi via Resend (Server Action `sendQuoteRequest`).
  * Clé `RESEND_API_KEY` requise côté serveur. Les pièces jointes ne sont pas encore prises en charge.
  */
 export function QuoteFormSection() {
   const formRef = useRef<HTMLFormElement>(null);
-  const [state, formAction, isPending] = useActionState(submitQuoteRequest, initialFormState);
+  const [state, formAction, isPending] = useActionState(sendQuoteRequest, initialFormState);
 
   useEffect(() => {
     if (state.status === "success") {
@@ -96,14 +99,19 @@ export function QuoteFormSection() {
                 <span className="block text-muted">Email</span>
                 <Link
                   href="mailto:contact@atelierguyonnet.com"
-                  className="focus-visible:ring-primary/30 mt-1 inline-block font-medium text-foreground no-underline transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className={`${focusRingClass} mt-1 inline-block font-medium text-foreground no-underline transition-opacity hover:opacity-80`}
                 >
                   contact@atelierguyonnet.com
                 </Link>
               </p>
               <p className="mt-4 font-sans text-sm text-foreground">
                 <span className="block text-muted">Téléphone</span>
-                <span className="mt-1 block font-medium text-muted">À compléter</span>
+                <Link
+                  href={`tel:${siteConfig.contactPhone}`}
+                  className={`${focusRingClass} mt-1 inline-block font-medium text-foreground no-underline transition-opacity hover:opacity-80`}
+                >
+                  {siteConfig.contactPhoneDisplay}
+                </Link>
               </p>
               <p className="mt-4 font-sans text-xs leading-relaxed text-muted">
                 Référence : {siteConfig.name} — {siteConfig.tagline}
@@ -272,7 +280,7 @@ export function QuoteFormSection() {
               <button
                 type="submit"
                 disabled={isPending}
-                className="focus-visible:ring-primary/30 min-h-12 w-full touch-manipulation rounded-sm bg-primary px-6 py-4 font-sans text-xs font-medium uppercase tracking-[0.18em] text-on-dark transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                className={`${focusRingClass} min-h-12 w-full touch-manipulation rounded-sm bg-primary px-6 py-4 font-sans text-xs font-medium uppercase tracking-[0.18em] text-on-dark transition-opacity hover:opacity-90 enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto`}
               >
                 {isPending ? "Envoi en cours…" : "Envoyer ma\u00A0demande"}
               </button>

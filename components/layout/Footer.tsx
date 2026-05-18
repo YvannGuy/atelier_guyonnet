@@ -63,7 +63,12 @@ export function Footer() {
             </p>
             <p className="mt-4 font-sans text-sm">
               <span className="block text-on-dark-muted">Téléphone</span>
-              <span className="mt-1 block text-on-dark/80">À compléter</span>
+              <Link
+                href={`tel:${siteConfig.contactPhone}`}
+                className="focus-visible:ring-on-dark/80 mt-1 inline-block text-on-dark no-underline transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+              >
+                {siteConfig.contactPhoneDisplay}
+              </Link>
             </p>
           </div>
 

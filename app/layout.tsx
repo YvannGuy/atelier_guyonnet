@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 
+import { FloatingActions } from "@/components/layout/FloatingActions";
 import { siteConfig } from "@/lib/constants/site";
 
 import "./globals.css";
@@ -76,7 +77,10 @@ export default function RootLayout({
       lang="fr"
       className={`${fontSans.variable} ${fontSerif.variable} h-full`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        {children}
+        <FloatingActions />
+      </body>
     </html>
   );
 }

@@ -16,6 +16,11 @@ export const siteConfig = {
   url: rawSiteUrl,
   /** Contact public affiché (footer, JSON-LD) — aligner avec la boîte réelle. */
   contactEmail: "contact@atelierguyonnet.com",
+  contactPhone: "+33666848976",
+  /** Affichage lisible du téléphone (même numéro que `contactPhone`). */
+  contactPhoneDisplay: "+33 6 66 84 89 76",
+  /** Numéro WhatsApp (chiffres internationaux sans +) pour wa.me. */
+  contactWhatsApp: "33666848976",
   /**
    * Profils sociaux à compléter quand existants (JSON-LD `sameAs`).
    * Laisser vide tant qu’aucune URL n’est publique.

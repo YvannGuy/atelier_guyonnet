@@ -80,7 +80,13 @@ export default function MentionsLegalesPage() {
                 >
                   contact@atelierguyonnet.com
                 </a>{" "}
-                — téléphone : à compléter
+                — téléphone :{" "}
+                <a
+                  href={`tel:${siteConfig.contactPhone}`}
+                  className="text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
+                >
+                  {siteConfig.contactPhoneDisplay}
+                </a>
               </p>
             </div>
           </section>
