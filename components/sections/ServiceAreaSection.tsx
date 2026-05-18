@@ -118,9 +118,6 @@ export function ServiceAreaSection() {
                 Zone indicative — les déplacements sont confirmés selon la localisation, la nature du
                 projet et les disponibilités de l’atelier.
               </p>
-              <p className="border-t border-border px-4 py-2 text-center font-sans text-[9px] uppercase tracking-[0.12em] text-muted/85 sm:px-5">
-                Fonds de carte © contributeurs OpenStreetMap — attribution affichée sur la carte.
-              </p>
             </div>
           </aside>
         </div>

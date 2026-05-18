@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef, type ElementType, type ReactNode } from "react";
 
 import { ensureScrollTrigger } from "@/components/motion/gsap-client";
+import { afterLayout, isElementVisible } from "@/components/motion/motion-dom";
 import { MOTION } from "@/components/motion/motion-config";
 import { prefersReducedMotion } from "@/components/motion/prefers-reduced-motion";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
@@ -21,26 +22,37 @@ export function ScrollReveal({ children, className, as: Tag = "div" }: ScrollRev
   const reducedMotion = useReducedMotion();
 
   useLayoutEffect(() => {
-    if (prefersReducedMotion() || reducedMotion || !ref.current) return;
+    if (prefersReducedMotion() || reducedMotion) return;
 
-    const gsap = ensureScrollTrigger();
-    const el = ref.current;
+    let ctx: { revert: () => void } | undefined;
+    let cancelled = false;
 
-    const ctx = gsap.context(() => {
-      gsap.from(el, {
-        y: MOTION.offset.revealY,
-        opacity: 0,
-        duration: MOTION.duration.reveal,
-        ease: MOTION.ease,
-        scrollTrigger: {
-          trigger: el,
-          start: MOTION.scrollStart,
-          once: true,
-        },
-      });
-    }, el);
+    const cancelAfterLayout = afterLayout(() => {
+      const el = ref.current;
+      if (cancelled || !el || !isElementVisible(el)) return;
 
-    return () => ctx.revert();
+      const gsapInstance = ensureScrollTrigger();
+      ctx = gsapInstance.context(() => {
+        gsapInstance.from(el, {
+          y: MOTION.offset.revealY,
+          opacity: 0,
+          duration: MOTION.duration.reveal,
+          ease: MOTION.ease,
+          scrollTrigger: {
+            trigger: el,
+            start: MOTION.scrollStart,
+            once: true,
+            invalidateOnRefresh: true,
+          },
+        });
+      }, el);
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAfterLayout();
+      ctx?.revert();
+    };
   }, [reducedMotion]);
 
   return (

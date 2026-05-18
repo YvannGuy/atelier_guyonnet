@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 
-import { ensureScrollTrigger } from "@/components/motion/gsap-client";
+import { ensureGsap } from "@/components/motion/gsap-client";
 import { MOTION } from "@/components/motion/motion-config";
 import { prefersReducedMotion } from "@/components/motion/prefers-reduced-motion";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
@@ -23,7 +23,7 @@ export function HeroMotion({ children, className }: HeroMotionProps) {
   useLayoutEffect(() => {
     if (prefersReducedMotion() || reducedMotion || !rootRef.current) return;
 
-    const gsap = ensureScrollTrigger();
+    const gsap = ensureGsap();
     const root = rootRef.current;
     const badge = root.querySelector<HTMLElement>("[data-hero-badge]");
     const title = root.querySelector<HTMLElement>("[data-hero-title]");

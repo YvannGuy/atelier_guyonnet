@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { ensureScrollTrigger } from "@/components/motion/gsap-client";
+import { afterLayout, isElementVisible } from "@/components/motion/motion-dom";
 import { MOTION } from "@/components/motion/motion-config";
 import { prefersReducedMotion } from "@/components/motion/prefers-reduced-motion";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
@@ -67,44 +68,50 @@ export function BeforeAfterSlider({
   };
 
   useEffect(() => {
-    if (
-      prefersReducedMotion() ||
-      reducedMotion ||
-      !frameRef.current ||
-      !handleRef.current ||
-      pulsePlayedRef.current
-    ) {
-      return;
-    }
+    if (prefersReducedMotion() || reducedMotion || pulsePlayedRef.current) return;
 
-    const gsap = ensureScrollTrigger();
-    const frame = frameRef.current;
-    const handle = handleRef.current;
+    let ctx: { revert: () => void } | undefined;
+    let cancelled = false;
 
-    const ctx = gsap.context(() => {
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: frame,
-          start: MOTION.scrollStart,
-          once: true,
-          onEnter: () => {
-            pulsePlayedRef.current = true;
-          },
-        },
-      })
-        .to(handle, {
-          scale: 1.08,
-          duration: MOTION.duration.pulse,
-          ease: MOTION.easeSoft,
-        })
-        .to(handle, {
-          scale: 1,
-          duration: MOTION.duration.pulse,
-          ease: MOTION.easeSoft,
-        });
-    }, frame);
+    const cancelAfterLayout = afterLayout(() => {
+      const frame = frameRef.current;
+      const handle = handleRef.current;
+      if (cancelled || !frame || !handle || pulsePlayedRef.current || !isElementVisible(frame)) {
+        return;
+      }
 
-    return () => ctx.revert();
+      const gsapInstance = ensureScrollTrigger();
+      ctx = gsapInstance.context(() => {
+        gsapInstance
+          .timeline({
+            scrollTrigger: {
+              trigger: frame,
+              start: MOTION.scrollStart,
+              once: true,
+              invalidateOnRefresh: true,
+              onEnter: () => {
+                pulsePlayedRef.current = true;
+              },
+            },
+          })
+          .to(handle, {
+            scale: 1.08,
+            duration: MOTION.duration.pulse,
+            ease: MOTION.easeSoft,
+          })
+          .to(handle, {
+            scale: 1,
+            duration: MOTION.duration.pulse,
+            ease: MOTION.easeSoft,
+          });
+      }, frame);
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAfterLayout();
+      ctx?.revert();
+    };
   }, [reducedMotion]);
 
   return (

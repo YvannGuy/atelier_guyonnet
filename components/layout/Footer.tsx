@@ -7,9 +7,6 @@ const quickLinks = [
   { href: "#services", label: "Services" },
   { href: "#inspirations", label: "Inspirations" },
   { href: "#methode", label: "Méthode" },
-  { href: "#apropos", label: "À propos" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#devis", label: "Devis" },
 ] as const;
 
 export function Footer() {

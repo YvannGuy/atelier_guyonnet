@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 
 import { ensureScrollTrigger } from "@/components/motion/gsap-client";
+import { afterLayout, isElementVisible } from "@/components/motion/motion-dom";
 import { MOTION } from "@/components/motion/motion-config";
 import { prefersReducedMotion } from "@/components/motion/prefers-reduced-motion";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
@@ -26,47 +27,59 @@ export function ProcessTimelineMotion({
   const reducedMotion = useReducedMotion();
 
   useLayoutEffect(() => {
-    if (prefersReducedMotion() || reducedMotion || !ref.current) return;
+    if (prefersReducedMotion() || reducedMotion) return;
 
-    const gsap = ensureScrollTrigger();
-    const root = ref.current;
-    const line = root.querySelector<HTMLElement>("[data-process-line]");
-    const steps = root.querySelectorAll<HTMLElement>("[data-process-step]");
+    let ctx: { revert: () => void } | undefined;
+    let cancelled = false;
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: root,
-          start: MOTION.scrollStart,
-          once: true,
-        },
-        defaults: { ease: MOTION.ease },
-      });
+    const cancelAfterLayout = afterLayout(() => {
+      const root = ref.current;
+      if (cancelled || !root || !isElementVisible(root)) return;
 
-      if (line) {
-        tl.from(line, {
-          scaleY: variant === "vertical" ? 0 : 1,
-          scaleX: variant === "horizontal" ? 0 : 1,
-          transformOrigin: variant === "vertical" ? "top center" : "left center",
-          duration: 0.9,
-        });
-      }
+      const line = root.querySelector<HTMLElement>("[data-process-line]");
+      const steps = root.querySelectorAll<HTMLElement>("[data-process-step]");
 
-      if (steps.length) {
-        tl.from(
-          steps,
-          {
-            y: 16,
-            opacity: 0,
-            duration: 0.55,
-            stagger: 0.12,
+      const gsapInstance = ensureScrollTrigger();
+      ctx = gsapInstance.context(() => {
+        const tl = gsapInstance.timeline({
+          scrollTrigger: {
+            trigger: root,
+            start: MOTION.scrollStart,
+            once: true,
+            invalidateOnRefresh: true,
           },
-          line ? "-=0.55" : 0,
-        );
-      }
-    }, root);
+          defaults: { ease: MOTION.ease },
+        });
 
-    return () => ctx.revert();
+        if (line) {
+          tl.from(line, {
+            scaleY: variant === "vertical" ? 0 : 1,
+            scaleX: variant === "horizontal" ? 0 : 1,
+            transformOrigin: variant === "vertical" ? "top center" : "left center",
+            duration: 0.9,
+          });
+        }
+
+        if (steps.length) {
+          tl.from(
+            steps,
+            {
+              y: 16,
+              opacity: 0,
+              duration: 0.55,
+              stagger: 0.12,
+            },
+            line ? "-=0.55" : 0,
+          );
+        }
+      }, root);
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAfterLayout();
+      ctx?.revert();
+    };
   }, [reducedMotion, variant]);
 
   return (
