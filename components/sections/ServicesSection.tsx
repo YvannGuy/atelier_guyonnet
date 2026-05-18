@@ -47,7 +47,16 @@ const services: ServiceItem[] = [
   },
 ];
 
-const upcomingServiceLabels = SEO_SERVICE_PAGES.slice(0, 3).map((p) => p.serviceType);
+const linkClass =
+  "font-medium text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground/40";
+
+const pageDressing = SEO_SERVICE_PAGES.find((p) => p.slug === "dressing-sur-mesure-paris")!;
+const pagePlacard = SEO_SERVICE_PAGES.find((p) => p.slug === "placard-sur-mesure-paris")!;
+const pageRangement = SEO_SERVICE_PAGES.find((p) => p.slug === "rangement-sur-mesure-paris")!;
+const pageBibliotheque = SEO_SERVICE_PAGES.find((p) => p.slug === "bibliotheque-sur-mesure-paris")!;
+const pageMeubleTv = SEO_SERVICE_PAGES.find((p) => p.slug === "meuble-tv-sur-mesure-paris")!;
+const pageOptimisation = SEO_SERVICE_PAGES.find((p) => p.slug === "optimisation-petit-appartement-paris")!;
+const pageAgencementIdf = SEO_SERVICE_PAGES.find((p) => p.slug === "agencement-sur-mesure-ile-de-france")!;
 
 export function ServicesSection() {
   return (
@@ -74,45 +83,75 @@ export function ServicesSection() {
         </div>
 
         <p className="mt-10 max-w-2xl font-sans text-sm leading-relaxed text-muted md:text-base">
-          Des pages détaillées par type de projet — notamment{" "}
-          {upcomingServiceLabels.map((label, i) => (
-            <span key={label}>
-              {i > 0 ? (i === upcomingServiceLabels.length - 1 ? " et " : ", ") : ""}
-              <strong className="font-medium text-foreground">{label}</strong>
-            </span>
-          ))}{" "}
-          — seront publiées progressivement. En attendant, décrivez votre besoin via le{" "}
-          <Link
-            href="#devis"
-            className="text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground/40"
-          >
+          Pages dédiées :{" "}
+          <Link href={pageDressing.canonicalPath} className={linkClass}>
+            Dressing sur mesure à Paris
+          </Link>
+          ,{" "}
+          <Link href={pagePlacard.canonicalPath} className={linkClass}>
+            Placard sur mesure à Paris
+          </Link>
+          ,{" "}
+          <Link href={pageRangement.canonicalPath} className={linkClass}>
+            Rangement sur mesure à Paris
+          </Link>
+          ,{" "}
+          <Link href={pageBibliotheque.canonicalPath} className={linkClass}>
+            Bibliothèque sur mesure à Paris
+          </Link>
+          ,{" "}
+          <Link href={pageMeubleTv.canonicalPath} className={linkClass}>
+            Meuble TV sur mesure à Paris
+          </Link>
+          ,{" "}
+          <Link href={pageOptimisation.canonicalPath} className={linkClass}>
+            Optimisation petit appartement à Paris
+          </Link>
+          . Vue d’ensemble régionale :{" "}
+          <Link href={pageAgencementIdf.canonicalPath} className={linkClass}>
+            agencement sur mesure en Île-de-France
+          </Link>
+          . Pages ville : à venir. Pour un premier échange, utilisez le{" "}
+          <Link href="#devis" className={linkClass}>
             formulaire de devis
           </Link>
           .
         </p>
 
         <ul className="mt-14 grid min-w-0 list-none gap-4 sm:mt-16 sm:grid-cols-2 sm:gap-5 lg:mt-20 lg:grid-cols-3 lg:gap-6">
-          {services.map((item, index) => (
-            <li key={item.title} className="min-w-0">
-              <article className="flex h-full flex-col gap-4 rounded-md border border-border bg-background p-6 shadow-none transition-colors duration-200 hover:border-foreground/15 sm:p-7">
-                <p className="font-sans text-[11px] font-medium tabular-nums tracking-[0.24em] text-muted">
-                  {String(index + 1).padStart(2, "0")}
-                </p>
-                <h3 className="font-serif text-xl leading-snug text-foreground sm:text-[1.35rem]">
-                  {item.title}
-                </h3>
-                <p className="font-sans text-sm leading-relaxed text-muted md:text-base">
-                  {item.description}
-                </p>
-                <p className="mt-auto border-t border-border pt-4 font-sans text-sm leading-relaxed text-foreground/95">
-                  <span className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
-                    Pour vous
-                  </span>
-                  {item.benefit}
-                </p>
-              </article>
-            </li>
-          ))}
+          {services.map((item, index) => {
+            const isOptimStudio = item.title === "Optimisation de studio";
+            return (
+              <li key={item.title} className="min-w-0">
+                <article className="flex h-full flex-col gap-4 rounded-md border border-border bg-background p-6 shadow-none transition-colors duration-200 hover:border-foreground/15 sm:p-7">
+                  <p className="font-sans text-[11px] font-medium tabular-nums tracking-[0.24em] text-muted">
+                    {String(index + 1).padStart(2, "0")}
+                  </p>
+                  <h3 className="font-serif text-xl leading-snug text-foreground sm:text-[1.35rem]">
+                    {isOptimStudio ? (
+                      <Link
+                        href={pageOptimisation.canonicalPath}
+                        className="text-foreground no-underline transition-colors hover:underline hover:decoration-foreground/35 hover:underline-offset-4"
+                      >
+                        {item.title}
+                      </Link>
+                    ) : (
+                      item.title
+                    )}
+                  </h3>
+                  <p className="font-sans text-sm leading-relaxed text-muted md:text-base">
+                    {item.description}
+                  </p>
+                  <p className="mt-auto border-t border-border pt-4 font-sans text-sm leading-relaxed text-foreground/95">
+                    <span className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
+                      Pour vous
+                    </span>
+                    {item.benefit}
+                  </p>
+                </article>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </section>
