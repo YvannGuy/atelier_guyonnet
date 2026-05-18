@@ -1,10 +1,12 @@
 import Image from "next/image";
 
+import { InspirationReveal } from "@/components/motion/InspirationReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { placeholderImages } from "@/lib/constants/placeholder-images";
 
 const disclaimerParagraphs = [
-  "Ces visuels présentent des exemples de solutions que nous pouvons concevoir : dressing, placard intégré, bibliothèque, meuble TV ou rangement sur mesure.",
-  "Chaque réalisation finale dépend de votre espace, de vos mesures, de vos besoins et des matériaux choisis. Les photographies ci-dessous sont des illustrations d’ambiance (sources externes), et non des chantiers Atelier Guyonnet.",
+  "Ces visuels présentent des exemples de solutions que nous pouvons concevoir : dressing, placard intégré, bibliothèque, meuble TV, cuisine sur mesure ou rangement sur mesure.",
+  "Chaque projet conçu dépend de votre espace, de vos mesures, de vos besoins et des matériaux choisis. Les visuels ci-dessous sont des illustrations d’inspiration — ils ne représentent pas des projets Atelier Guyonnet.",
 ] as const;
 
 type InspirationItem = {
@@ -49,6 +51,14 @@ const inspirations: InspirationItem[] = [
     imageAlt: placeholderImages.inspirationMeubleTv.alt,
     accentLine: "Filière technique · lignée basse · équilibre du mur",
   },
+  {
+    title: "Cuisine sur mesure",
+    description:
+      "Une cuisine pensée pour gagner en rangement, structurer les volumes et créer un ensemble chaleureux, pratique et cohérent avec la pièce.",
+    imageSrc: placeholderImages.inspirationCuisine.publicPath,
+    imageAlt: placeholderImages.inspirationCuisine.alt,
+    accentLine: "Rangements intégrés · colonnes · plan de travail",
+  },
 ];
 
 function InspirationFigure({
@@ -70,6 +80,7 @@ function InspirationFigure({
 
   return (
     <figure
+      data-inspiration-figure
       className={`relative overflow-hidden rounded-md border border-border bg-secondary/30 ${aspectClass}`}
     >
       <Image
@@ -80,7 +91,6 @@ function InspirationFigure({
         className="object-cover object-center"
       />
 
-      {/* Filtre éditorial — évite l’effet « catalogue stock » */}
       <div
         className="pointer-events-none absolute inset-0 z-1 bg-linear-to-t from-primary/35 via-secondary/15 to-background/25"
         aria-hidden
@@ -101,8 +111,11 @@ function InspirationFigure({
         aria-hidden
       />
 
-      <figcaption className="absolute inset-x-0 bottom-0 z-2 bg-linear-to-t from-primary/65 via-primary/20 to-transparent px-4 pb-4 pt-16 sm:px-5 sm:pb-5">
-        <p className="font-sans text-[10px] font-medium uppercase tracking-[0.2em] text-on-dark/90">
+      <figcaption
+        data-inspiration-caption
+        className="absolute inset-x-0 bottom-0 z-2 bg-linear-to-t from-primary/65 via-primary/20 to-transparent px-4 pb-4 pt-16 sm:px-5 sm:pb-5"
+      >
+        <p className="font-sans text-[10px] font-medium tracking-[0.14em] text-on-dark/90">
           Visuel d’inspiration
         </p>
         <p className="mt-1 font-sans text-[11px] leading-snug text-on-dark-muted/90">{item.accentLine}</p>
@@ -119,7 +132,7 @@ export function InspirationsSection() {
       className="border-t border-border bg-background px-4 py-20 sm:px-6 md:py-28 lg:px-10"
     >
       <div className="mx-auto max-w-6xl lg:px-2">
-        <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:max-w-2xl lg:text-left">
+        <ScrollReveal className="mx-auto max-w-3xl text-center lg:mx-0 lg:max-w-2xl lg:text-left">
           <p className="font-sans text-[11px] font-light uppercase tracking-[0.28em] text-muted">
             Inspirations
           </p>
@@ -134,29 +147,26 @@ export function InspirationsSection() {
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
-        </div>
+        </ScrollReveal>
 
         <div className="mt-14 grid min-w-0 grid-cols-1 gap-8 sm:mt-16 lg:mt-20 lg:grid-cols-2 lg:gap-10">
           {inspirations.map((item, index) => {
             const layout = index === 0 ? "wide" : "standard";
             return (
-              <article
+              <InspirationReveal
                 key={item.title}
                 className={`min-w-0 ${layout === "wide" ? "lg:col-span-2" : ""}`}
               >
                 <InspirationFigure item={item} layout={layout} />
-                <div className="mt-5 border-t border-border pt-5">
+                <div data-inspiration-copy className="mt-5 border-t border-border pt-5">
                   <h3 className="font-serif text-xl leading-snug text-foreground sm:text-[1.35rem]">
                     {item.title}
                   </h3>
                   <p className="mt-2 font-sans text-sm leading-relaxed text-muted md:text-base">
                     {item.description}
                   </p>
-                  <p className="mt-3 font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-foreground/80">
-                    Visuel d’inspiration (illustration)
-                  </p>
                 </div>
-              </article>
+              </InspirationReveal>
             );
           })}
         </div>

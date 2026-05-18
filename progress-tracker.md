@@ -2,7 +2,7 @@
 
 ## Phase actuelle
 
-**Pages services SEO** : **six** routes + **hub** **`/agencement-sur-mesure-ile-de-france`** + **six pages zones**. **Formulaire devis** : envoi e-mail via **Resend** (Server Action, sans stockage ni upload). **Sitemap** : home + 6 services + hub + 6 zones + légal.
+**Pages services SEO** : **sept** routes (+ cuisine) + **hub** + **six pages zones**. **Formulaire devis** : Resend. **Cuisine** + **Avant/Après** avec Voir plus / Voir moins (2 exemples initiaux).
 
 ## Objectif court terme
 
@@ -19,6 +19,318 @@
 - **Stockage fichiers** : Blob, lien cloud, ou e-mail uniquement (upload photo non géré au MVP).
 - **Contenu juridique** : affiner avec un professionnel si besoin.
 - **Tracking** : analytics ou non au MVP.
+
+## Dernière livraison — Audit performance post-GSAP (2026-05-18)
+
+### Audit effectué
+
+| Point | Statut |
+|-------|--------|
+| GSAP uniquement dans composants client ciblés | OK — `components/motion/*`, `BeforeAfterSlider` |
+| Sections landing en Server Components | OK — wrappers motion client isolés |
+| `prefers-reduced-motion` | Corrigé — `prefersReducedMotion()` synchrone avant chaque animation + hook réactif |
+| Hero / LCP | OK — image `priority`, zoom CSS only, pas de vidéo |
+| ScrollTrigger cleanup | OK — `gsap.context()` + `revert()` partout |
+| Scroll hijacking | OK — aucun `pin` / `scrub` |
+| CTA cliquables | OK — animations `opacity`/`transform` uniquement |
+| Slider avant/après | OK — souris, tactile, clavier inchangés |
+| Build + lint | OK |
+
+### Correction appliquée
+
+- **`prefers-reduced-motion.ts`** + mise à jour hooks motion : lecture synchrone `matchMedia` dans `useLayoutEffect` des animations (évite une entrée hero animée pour les utilisateurs reduced-motion).
+
+### Prochaine étape recommandée
+
+1. **Lighthouse mobile** (local ou preview Vercel)
+2. **Brancher formulaire Resend** en production
+3. Déployer Vercel + domaine + Search Console
+
+### Fichiers modifiés
+
+- `components/motion/prefers-reduced-motion.ts` (créé)
+- `components/motion/useReducedMotion.ts` + tous les wrappers motion
+- `components/ui/BeforeAfterSlider.tsx`
+- `progress-tracker.md`
+
+---
+
+## Dernière livraison — Animations GSAP premium (MVP) (2026-05-18)
+
+### Fait
+
+- **GSAP** installé (`gsap` + ScrollTrigger).
+- **`components/motion/`** : `HeroMotion`, `ScrollReveal`, `StaggerReveal`, `InspirationReveal`, `ProcessTimelineMotion`, `useReducedMotion`, `motion-config`.
+- **Hero** : timeline badge → H1 → texte → CTA → réassurances ; zoom lent CSS sur image de fond.
+- **Sections** : reveal au scroll (Problem, Services, Inspirations, Before/After, Process).
+- **Services** : stagger cartes mobile + desktop.
+- **Inspirations** : reveal masque vertical + caption/texte.
+- **Before/After** : pulse unique poignée slider au viewport.
+- **Méthode** : timeline séquencée + ligne progressive.
+- **`prefers-reduced-motion`** : animations désactivées.
+
+### Limites restantes
+
+- About, Offre lancement, Zone, FAQ, formulaire : pas d’animation (volontaire).
+- Pas de vidéo hero, pas de parallax agressif, pas de scroll hijacking.
+- Animations avancées (transitions pages, parallax inspiration) : phase 2.
+
+### Prochaine étape recommandée
+
+Brancher le **formulaire Resend** en production, puis tester **Lighthouse / performance mobile** avant d’ajouter des animations avancées.
+
+### Validations
+
+- `npm run build` : OK.
+
+### Fichiers modifiés / créés
+
+- `components/motion/*` (créés)
+- `components/sections/HeroSection.tsx`, `ProblemSection.tsx`, `ServicesSection.tsx`, `InspirationsSection.tsx`, `BeforeAfterSection.tsx`, `ProcessSection.tsx`
+- `components/ui/BeforeAfterSlider.tsx`
+- `app/globals.css`, `package.json`, `package-lock.json`, `progress-tracker.md`
+
+---
+
+## Dernière livraison — UX landing Services + labels inspiration (2026-05-18)
+
+### Fait
+
+- **`ServicesSection.tsx`** : refonte éditoriale — 2 solutions principales (Dressing, Placard) en grand sur desktop ; 5 autres aménagements en grille compacte ; scroll horizontal natif (`snap-start`) sur mobile ; CTA « Voir la page » si page dédiée ; liste des 7 services alignée sur l’offre (dont Rangement sur mesure).
+- **Pages locales** : liens vers les 6 zones confirmés (plus de « Pages ville : à venir »).
+- **`BeforeAfterSection.tsx`** : label unifié « Comparaison indicative — visuels d’inspiration générés ».
+- **`BeforeAfterList.tsx`** : labels par exemple simplifiés ; système Voir plus / Voir moins conservé (2 exemples initiaux).
+- **`InspirationsSection.tsx`** : disclaimer sans termes « réalisation / chantier » ; label image « Visuel d’inspiration » adouci.
+
+### Validations
+
+- Hiérarchie desktop + scroll mobile OK.
+- Ordre avant/après inchangé (biblio → dressing → meuble TV → placard → cuisine).
+- `npm run build` : OK.
+
+### Prochaine étape recommandée
+
+Brancher et valider le **formulaire Resend** en production (domaine vérifié, variables Vercel).
+
+### Fichiers modifiés
+
+- `components/sections/ServicesSection.tsx`
+- `components/sections/InspirationsSection.tsx`
+- `components/sections/BeforeAfterSection.tsx`
+- `components/ui/BeforeAfterList.tsx`
+- `progress-tracker.md`
+
+---
+
+## Dernière livraison — Liens pages locales ServicesSection (2026-05-18)
+
+### Fait
+
+- **`ServicesSection.tsx`** : remplacement de « Pages ville : à venir. » par « Pages locales : » avec liens vers les 6 zones existantes (`SEO_ZONE_PAGES`).
+
+### Validations
+
+- « Pages ville : à venir. » supprimé.
+- 6 villes liées : Paris, Boulogne-Billancourt, Neuilly-sur-Seine, Levallois-Perret, Issy-les-Moulineaux, Vincennes.
+- `npm run build` : OK.
+
+### Fichiers modifiés
+
+- `components/sections/ServicesSection.tsx`, `progress-tracker.md`
+
+---
+
+## Dernière livraison — Page SEO cuisine Paris (2026-05-18)
+
+### Fait
+
+- **`app/cuisine-sur-mesure-paris/page.tsx`** : hero, constat, composants (meubles, façades, colonnes, plan de travail), optimisations, méthode, zone, FAQ (5), maillage interne, CTAs `#devis` / `#inspirations`.
+- **`components/seo/CuisineSurMesureParisJsonLd.tsx`** : BreadcrumbList, Service, FAQPage.
+- **`lib/constants/seo-pages.ts`** : entrée `cuisine-sur-mesure-paris`.
+- **`app/sitemap.ts`** : URL `/cuisine-sur-mesure-paris` (priority 0.85).
+- **`ServicesSection`** : lien vers la page cuisine (intro + carte 07).
+- **Hub IdF** : offre « Cuisine sur mesure à Paris » ajoutée.
+
+### Positionnement
+
+- Agencement cuisine, mobilier sur mesure, rangements, façades — **pas** rénovation complète, plomberie, électricité ou gaz.
+
+### Validations
+
+- `npm run build` : OK.
+
+### Fichiers modifiés
+
+- `app/cuisine-sur-mesure-paris/page.tsx` (créé)
+- `components/seo/CuisineSurMesureParisJsonLd.tsx` (créé)
+- `lib/constants/seo-pages.ts`, `app/sitemap.ts`
+- `components/sections/ServicesSection.tsx`, `app/agencement-sur-mesure-ile-de-france/page.tsx`
+- `progress-tracker.md`
+
+---
+
+## Dernière livraison — Voir plus / Voir moins Avant-Après (2026-05-18)
+
+### Fait
+
+- **`components/ui/BeforeAfterList.tsx`** (client) : 2 comparaisons visibles au chargement, bouton « Voir plus d’exemples » / « Voir moins », `aria-expanded` + scroll doux au repli.
+- **`BeforeAfterSection.tsx`** : Server Component, délègue la liste au composant client.
+- CTA « Imaginer mon projet » : discret (lien) quand replié, bouton bordure quand tout est affiché.
+
+### Validations
+
+- Alternance éditoriale et sliders inchangés.
+- `npm run build` : OK.
+
+### Limites
+
+- Visuels générés — remplacer par photos réelles Atelier Guyonnet.
+
+### Fichiers modifiés
+
+- `components/ui/BeforeAfterList.tsx` (créé), `components/sections/BeforeAfterSection.tsx`, `progress-tracker.md`
+
+---
+
+## Dernière livraison — Cuisine sur mesure (sections landing) (2026-05-18)
+
+### Fait
+
+- **`ServicesSection`** : carte « Cuisine sur mesure » (07) — angle agencement / menuiserie, sans plomberie ni électricité.
+- **`InspirationsSection`** : carte cuisine + visuel `/images/inspirations/cuisine.jpg`.
+- **`before-after-images.ts`** : 5ᵉ comparaison cuisine (slider gauche / texte droite sur desktop).
+- **`placeholder-images.ts`** : entrée `inspirationCuisine`.
+- **Images** : `public/images/inspirations/cuisine.jpg`, `public/images/before-after/cuisine-avant.png`.
+
+### Validations
+
+- Pas de page SEO cuisine, pas de lien cassé.
+- Disclaimers inspiration conservés.
+- `npm run build` : OK.
+
+### Limites
+
+- Visuels générés — remplacer par photos réelles Atelier Guyonnet.
+- Pas de page dédiée `/cuisine-sur-mesure-paris`.
+
+### Fichiers modifiés
+
+- `components/sections/ServicesSection.tsx`, `InspirationsSection.tsx`
+- `lib/constants/before-after-images.ts`, `lib/constants/placeholder-images.ts`
+- `public/images/README.md`, `progress-tracker.md`
+
+---
+
+## Dernière livraison — Visuel À propos artisan atelier (2026-05-18)
+
+### Fait
+
+- **`public/images/about/artisan-atelier-decoupe-bois.png`** — visuel d’ambiance artisan en atelier.
+- **`components/sections/AboutSection.tsx`** : `next/image`, cadrage `object-cover`, légende « Ambiance atelier — illustration » + disclaimer honnête.
+
+### Validations
+
+- Texte À propos inchangé ; alt et légende conformes (pas de « photo réelle »).
+- `npm run build` : OK.
+
+### Limites
+
+- Visuel généré — remplacer par une vraie photo de l’artisan ou de l’atelier lorsque disponible.
+- Fichier PNG ~2 Mo — optimiser en JPG/WebP si besoin perf.
+
+### Fichiers créés / modifiés
+
+- `public/images/about/artisan-atelier-decoupe-bois.png`, `components/sections/AboutSection.tsx`, `public/images/README.md`, `progress-tracker.md`
+
+### Prochaine étape recommandée
+
+**Déploiement Vercel** + photo atelier réelle à terme.
+
+---
+
+## Dernière livraison — Comparaisons avant/après (2026-05-18)
+
+### Fait
+
+- **`lib/constants/before-after-images.ts`** : 4 comparaisons (bibliothèque, dressing, meuble TV, placard entrée).
+- **`public/images/before-after/`** : 4 visuels « avant » (~290–359 Ko).
+- **`components/sections/BeforeAfterSection.tsx`** : 4 sliders empilés, intro + disclaimers honnêtes, CTA `#devis`.
+- **`components/ui/BeforeAfterSlider.tsx`** : prop `title` optionnelle, `aria-label` ajusté, recadrage `object-center` sur l’après.
+
+### Validations
+
+- Slider : souris, tactile (`setPointerCapture`), clavier (`input range` masqué).
+- Pas de barre range visible ; labels Avant / Après sur l’image.
+- `npm run build` : OK.
+
+### Limites
+
+- Comparaisons **indicatives** — pièces avant/après non identiques.
+- Visuels générés, pas chantiers réels ; remplacer progressivement par photos atelier.
+
+### Fichiers créés / modifiés
+
+- `lib/constants/before-after-images.ts`, `public/images/before-after/*.jpg`
+- `components/sections/BeforeAfterSection.tsx`, `components/ui/BeforeAfterSlider.tsx`
+- `public/images/README.md`, `progress-tracker.md`
+
+### Prochaine étape recommandée
+
+**Déploiement Vercel**.
+
+---
+
+## Dernière livraison — Visuel dressing inspirations (2026-05-18)
+
+### Fait
+
+- **`public/images/inspirations/dressing.jpg`** (~348 Ko) — rendu dressing toute hauteur.
+- **`lib/constants/placeholder-images.ts`** : `inspirationDressing` → `/images/inspirations/dressing.jpg` + `alt` mis à jour.
+- **`public/images/README.md`** : dressing ajouté au tableau inspirations Ag.
+
+### Validations
+
+- Section **Inspirations** : les **4 cartes** utilisent désormais les rendus Atelier Guyonnet.
+- Libellés UI inchangés : « Visuel d’inspiration (illustration) ».
+
+### Limites
+
+- Rendu généré = **inspiration** uniquement, pas réalisation client.
+- Hero, avant/après et à-propos restent sur placeholders Unsplash.
+
+### Prochaine étape recommandée
+
+**Déploiement Vercel**.
+
+---
+
+## Dernière livraison — Visuels inspirations Atelier Guyonnet (2026-05-18)
+
+### Fait
+
+- **`public/images/inspirations/`** : `placard-entree.jpg`, `bibliotheque.jpg`, `meuble-tv.jpg` (rendus réalistes, ~290–410 Ko).
+- **`lib/constants/placeholder-images.ts`** : chemins et `alt` mis à jour pour les 3 cartes (libellés « visuel d’inspiration », pas réalisation).
+- **`components/sections/InspirationsSection.tsx`** : disclaimer ajusté (rendus / ambiances, pas chantiers réels).
+- **`public/images/README.md`** : documentation inspirations Ag vs placeholders Unsplash.
+
+### Validations
+
+- Dressing : toujours `/images/placeholders/inspiration-dressing.jpg` (Unsplash).
+
+### Limites
+
+- Visuels générés = **inspiration** uniquement, pas portfolio chantier.
+- Hero, avant/après et à-propos restent sur placeholders Unsplash.
+
+### Fichiers créés / modifiés
+
+- `public/images/inspirations/*.jpg`, `lib/constants/placeholder-images.ts`, `components/sections/InspirationsSection.tsx`, `public/images/README.md`, `progress-tracker.md`
+
+### Prochaine étape recommandée
+
+Visuel **dressing** + **déploiement Vercel**.
+
+---
 
 ## Dernière livraison — Formulaire devis Resend (2026-05-16)
 

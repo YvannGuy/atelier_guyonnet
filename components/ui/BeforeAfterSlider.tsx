@@ -1,13 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+
+import { ensureScrollTrigger } from "@/components/motion/gsap-client";
+import { MOTION } from "@/components/motion/motion-config";
+import { prefersReducedMotion } from "@/components/motion/prefers-reduced-motion";
+import { useReducedMotion } from "@/components/motion/useReducedMotion";
 
 type BeforeAfterSliderProps = {
   beforeSrc: string;
   beforeAlt: string;
   afterSrc: string;
   afterAlt: string;
+  title?: string;
 };
 
 /**
@@ -18,12 +24,16 @@ export function BeforeAfterSlider({
   beforeAlt,
   afterSrc,
   afterAlt,
+  title,
 }: BeforeAfterSliderProps) {
   const [position, setPosition] = useState(50);
   const draggingRef = useRef(false);
   const frameRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
+  const pulsePlayedRef = useRef(false);
   const rangeId = useId();
   const clipRight = 100 - position;
+  const reducedMotion = useReducedMotion();
 
   const setFromClientX = useCallback((clientX: number) => {
     const el = frameRef.current;
@@ -56,13 +66,58 @@ export function BeforeAfterSlider({
     draggingRef.current = false;
   };
 
+  useEffect(() => {
+    if (
+      prefersReducedMotion() ||
+      reducedMotion ||
+      !frameRef.current ||
+      !handleRef.current ||
+      pulsePlayedRef.current
+    ) {
+      return;
+    }
+
+    const gsap = ensureScrollTrigger();
+    const frame = frameRef.current;
+    const handle = handleRef.current;
+
+    const ctx = gsap.context(() => {
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: frame,
+          start: MOTION.scrollStart,
+          once: true,
+          onEnter: () => {
+            pulsePlayedRef.current = true;
+          },
+        },
+      })
+        .to(handle, {
+          scale: 1.08,
+          duration: MOTION.duration.pulse,
+          ease: MOTION.easeSoft,
+        })
+        .to(handle, {
+          scale: 1,
+          duration: MOTION.duration.pulse,
+          ease: MOTION.easeSoft,
+        });
+    }, frame);
+
+    return () => ctx.revert();
+  }, [reducedMotion]);
+
   return (
     <div className="overflow-hidden rounded-md border border-border bg-background">
       <div
         ref={frameRef}
         className="relative aspect-16/11 min-h-[200px] w-full cursor-ew-resize touch-pan-y sm:aspect-16/10 sm:min-h-[240px] md:min-h-[280px]"
         role="group"
-        aria-label="Comparaison avant et après. Visuels d’ambiance, pas un chantier réel."
+        aria-label={
+          title
+            ? `Comparer l’avant et l’après — ${title}`
+            : "Comparer l’avant et l’après"
+        }
         onPointerDown={onPointerDownFrame}
         onPointerMove={onPointerMoveFrame}
         onPointerUp={endDrag}
@@ -82,7 +137,7 @@ export function BeforeAfterSlider({
           step={1}
           value={position}
           onChange={(e) => setPosition(Number(e.target.value))}
-          aria-label="Comparer l’avant et l’après : flèches gauche et droite pour déplacer la séparation."
+          aria-label="Comparer l’avant et l’après"
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(position)}
@@ -94,7 +149,7 @@ export function BeforeAfterSlider({
           src={beforeSrc}
           alt={beforeAlt}
           fill
-          sizes="(min-width: 896px) 56rem, 100vw"
+          sizes="(min-width: 1024px) min(576px, 50vw), 100vw"
           className="pointer-events-none object-cover object-center"
           draggable={false}
           priority={false}
@@ -108,8 +163,8 @@ export function BeforeAfterSlider({
             src={afterSrc}
             alt=""
             fill
-            sizes="(min-width: 896px) 56rem, 100vw"
-            className="object-cover object-[center_40%]"
+            sizes="(min-width: 1024px) min(576px, 50vw), 100vw"
+            className="object-cover object-center"
             draggable={false}
             aria-hidden
           />
@@ -127,6 +182,7 @@ export function BeforeAfterSlider({
         />
 
         <div
+          ref={handleRef}
           className="absolute z-30 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center rounded-full border border-border bg-background/95 shadow-md sm:h-12 sm:w-12"
           style={{ left: `${position}%`, top: "50%" }}
           aria-hidden
@@ -143,10 +199,6 @@ export function BeforeAfterSlider({
           Après
         </span>
       </div>
-
-      <p className="border-t border-border bg-secondary/10 px-4 py-3 text-center font-sans text-[10px] uppercase tracking-[0.18em] text-muted sm:px-5">
-        Illustration d’ambiance — pas un avant/après réel
-      </p>
     </div>
   );
 }

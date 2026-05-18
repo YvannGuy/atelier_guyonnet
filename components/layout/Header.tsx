@@ -3,7 +3,6 @@ import Link from "next/link";
 import { MobileNav, type HeaderNavItem } from "@/components/layout/MobileNav";
 
 const navItems: HeaderNavItem[] = [
-  { href: "/", label: "Accueil" },
   { href: "#services", label: "Services" },
   { href: "#inspirations", label: "Inspirations" },
   { href: "#methode", label: "Méthode" },

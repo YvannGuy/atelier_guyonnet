@@ -1,6 +1,8 @@
 import Image from "next/image";
 
-import { placeholderImages } from "@/lib/constants/placeholder-images";
+const ABOUT_IMAGE_PATH = "/images/about/artisan-atelier-decoupe-bois.png";
+const ABOUT_IMAGE_ALT =
+  "Visuel d’ambiance — artisan en atelier travaillant le bois avec une scie guidée";
 
 const trustPoints = [
   "Travail sur mesure",
@@ -59,18 +61,18 @@ export function AboutSection() {
             <figure className="relative overflow-hidden rounded-md border border-border bg-background">
               <div className="relative aspect-4/5 sm:aspect-5/6 lg:min-h-112">
                 <Image
-                  src={placeholderImages.aboutAtelierDetail.publicPath}
-                  alt={placeholderImages.aboutAtelierDetail.alt}
+                  src={ABOUT_IMAGE_PATH}
+                  alt={ABOUT_IMAGE_ALT}
                   fill
                   sizes="(min-width: 1024px) 40vw, 100vw"
-                  className="object-cover object-center"
+                  className="object-cover object-[center_38%]"
                 />
                 <div
-                  className="pointer-events-none absolute inset-0 bg-linear-to-t from-primary/45 via-transparent to-secondary/20"
+                  className="pointer-events-none absolute inset-0 bg-linear-to-t from-primary/40 via-transparent to-secondary/15"
                   aria-hidden
                 />
                 <div
-                  className="pointer-events-none absolute inset-0 opacity-[0.14]"
+                  className="pointer-events-none absolute inset-0 opacity-[0.12]"
                   style={{
                     backgroundImage:
                       "repeating-linear-gradient(90deg, transparent, transparent 32px, color-mix(in srgb, var(--ag-text-main) 10%, transparent) 32px, color-mix(in srgb, var(--ag-text-main) 10%, transparent) 33px)",
@@ -90,15 +92,6 @@ export function AboutSection() {
                   aria-hidden
                 />
               </div>
-              <figcaption className="relative z-10 bg-linear-to-t from-primary/55 to-transparent px-5 pb-5 pt-12 sm:px-6 sm:pb-6 sm:pt-14">
-                <p className="font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-foreground">
-                  Ambiance atelier — illustration
-                </p>
-                <p className="mt-2 font-sans text-sm leading-relaxed text-muted">
-                  Détail d’outils et de matière : visuel générique d’inspiration, sans identifier
-                  une personne ni représenter l’atelier réel.
-                </p>
-              </figcaption>
             </figure>
           </aside>
         </div>

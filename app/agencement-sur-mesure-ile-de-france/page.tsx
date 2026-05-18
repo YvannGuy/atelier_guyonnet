@@ -28,6 +28,7 @@ const pageRangement = SEO_SERVICE_PAGES.find((p) => p.slug === "rangement-sur-me
 const pageBibliotheque = SEO_SERVICE_PAGES.find((p) => p.slug === "bibliotheque-sur-mesure-paris")!;
 const pageMeubleTv = SEO_SERVICE_PAGES.find((p) => p.slug === "meuble-tv-sur-mesure-paris")!;
 const pageOptimisation = SEO_SERVICE_PAGES.find((p) => p.slug === "optimisation-petit-appartement-paris")!;
+const pageCuisine = SEO_SERVICE_PAGES.find((p) => p.slug === "cuisine-sur-mesure-paris")!;
 
 const serviceOffers: {
   title: string;
@@ -69,6 +70,12 @@ const serviceOffers: {
     href: pageOptimisation.canonicalPath,
     intro:
       "Studios et deux-pièces : plan global pour gagner du linéaire utile sans surcharger visuellement l’ensemble.",
+  },
+  {
+    title: "Cuisine sur mesure à Paris",
+    href: pageCuisine.canonicalPath,
+    intro:
+      "Meubles bas et hauts, colonnes, façades et plan de travail : agencement menuiserie pour une cuisine plus rangée, sans rénovation technique complète.",
   },
 ];
 

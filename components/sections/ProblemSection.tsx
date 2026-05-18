@@ -1,3 +1,6 @@
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
+import { StaggerReveal } from "@/components/motion/StaggerReveal";
+
 const microPoints = [
   "Recoins inexploités",
   "Meubles standards mal adaptés",
@@ -12,7 +15,7 @@ export function ProblemSection() {
     >
       <div className="mx-auto max-w-6xl lg:px-2">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-start">
-          <div className="max-w-xl">
+          <ScrollReveal className="max-w-xl">
             <p className="font-sans text-[11px] font-light uppercase tracking-[0.28em] text-muted">
               Constat
             </p>
@@ -22,9 +25,9 @@ export function ProblemSection() {
             >
               À Paris, chaque mètre carré compte.
             </h2>
-          </div>
+          </ScrollReveal>
 
-          <div className="max-w-xl lg:pt-1">
+          <ScrollReveal className="max-w-xl lg:pt-1">
             <div className="space-y-6 font-sans text-base leading-relaxed text-muted md:text-lg">
               <p className="text-foreground/90">
                 Les appartements parisiens offrent souvent des volumes précieux, mais pas toujours
@@ -40,13 +43,17 @@ export function ProblemSection() {
                 l’espace.
               </p>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
 
-        <div className="relative mt-14 border-t border-border pt-12 md:mt-20 md:pt-14">
+        <StaggerReveal className="relative mt-14 border-t border-border pt-12 md:mt-20 md:pt-14">
           <ul className="grid gap-8 sm:grid-cols-3 sm:gap-6 lg:gap-10">
             {microPoints.map((label, index) => (
-              <li key={label} className="border-l border-border pl-5 sm:border-l-0 sm:border-t sm:border-border sm:pl-0 sm:pt-6">
+              <li
+                key={label}
+                data-motion-item
+                className="border-l border-border pl-5 sm:border-l-0 sm:border-t sm:border-border sm:pl-0 sm:pt-6"
+              >
                 <p className="font-sans text-[11px] font-medium uppercase tracking-[0.2em] text-muted">
                   {String(index + 1).padStart(2, "0")}
                 </p>
@@ -54,7 +61,7 @@ export function ProblemSection() {
               </li>
             ))}
           </ul>
-        </div>
+        </StaggerReveal>
       </div>
     </section>
   );

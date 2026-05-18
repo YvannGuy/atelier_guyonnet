@@ -11,17 +11,61 @@ Les fichiers suivants sont importés depuis **Unsplash**, stockés **localement*
 | Fichier | Chemin public | Section | ID photo Unsplash (import d’origine) |
 |--------|----------------|---------|----------------------------------------|
 | `hero.jpg` | `/images/placeholders/hero.jpg` | Hero | `photo-1616046229478-9901c5536a45` |
-| `inspiration-dressing.jpg` | `/images/placeholders/inspiration-dressing.jpg` | Inspirations | `photo-1631679706909-1844bbd07221` |
-| `inspiration-placard-entree.jpg` | `/images/placeholders/inspiration-placard-entree.jpg` | Inspirations | `photo-1600121848594-d8644e57abab` |
-| `inspiration-bibliotheque.jpg` | `/images/placeholders/inspiration-bibliotheque.jpg` | Inspirations | `photo-1507842217343-583bb7270b66` |
-| `inspiration-meuble-tv.jpg` | `/images/placeholders/inspiration-meuble-tv.jpg` | Inspirations | `photo-1600210492486-724fe5c67fb0` |
+| `inspiration-dressing.jpg` | `/images/placeholders/inspiration-dressing.jpg` | Inspirations (legacy) | `photo-1631679706909-1844bbd07221` |
+| `inspiration-placard-entree.jpg` | `/images/placeholders/inspiration-placard-entree.jpg` | Inspirations (legacy) | `photo-1600121848594-d8644e57abab` |
+| `inspiration-bibliotheque.jpg` | `/images/placeholders/inspiration-bibliotheque.jpg` | Inspirations (legacy) | `photo-1507842217343-583bb7270b66` |
+| `inspiration-meuble-tv.jpg` | `/images/placeholders/inspiration-meuble-tv.jpg` | Inspirations (legacy) | `photo-1600210492486-724fe5c67fb0` |
 | `before-after-avant.jpg` | `/images/placeholders/before-after-avant.jpg` | Avant / Après | `photo-1524758631624-e2822e304c36` |
 | `before-after-apres.jpg` | `/images/placeholders/before-after-apres.jpg` | Avant / Après | `photo-1586023492125-27b2c045efd7` |
-| `about-atelier-detail.jpg` | `/images/placeholders/about-atelier-detail.jpg` | À propos | `photo-1504148455328-c376907d081c` |
+| `about-atelier-detail.jpg` | `/images/placeholders/about-atelier-detail.jpg` | À propos (legacy) | `photo-1504148455328-c376907d081c` |
 
 **Crédit** : conformément à la licence Unsplash, pensez à créditer les photographes sur les supports où c’est pertinent ; fiche image : `https://unsplash.com/photos/<id>` (certaines pages redirigent vers un slug court).
 
 **Mise à jour** : pour remplacer un visuel, écrasez le fichier dans `public/images/placeholders/` (même nom) **ou** changez le `publicPath` / ajoutez un nouveau fichier dans `placeholder-images.ts`.
+
+---
+
+## Inspirations Atelier Guyonnet (rendus d’inspiration)
+
+Visuels réalistes générés pour la marque, branchés dans **`lib/constants/placeholder-images.ts`**. Libellés UI : **visuel d’inspiration** — ne pas présenter comme réalisations clientes.
+
+| Fichier | Chemin public | Carte section Inspirations |
+|--------|----------------|----------------------------|
+| `dressing.jpg` | `/images/inspirations/dressing.jpg` | Dressing toute hauteur |
+| `placard-entree.jpg` | `/images/inspirations/placard-entree.jpg` | Placard d’entrée intégré |
+| `bibliotheque.jpg` | `/images/inspirations/bibliotheque.jpg` | Bibliothèque murale |
+| `meuble-tv.jpg` | `/images/inspirations/meuble-tv.jpg` | Meuble TV avec rangements |
+| `cuisine.jpg` | `/images/inspirations/cuisine.jpg` | Cuisine sur mesure |
+
+`/images/inspirations/cuisine.jpg` et `/images/before-after/cuisine-avant.png` sont des visuels d’inspiration générés pour illustrer une possibilité d’agencement de cuisine sur mesure. Ils ne doivent **pas** être présentés comme des réalisations clientes Atelier Guyonnet.
+
+---
+
+## Avant / Après (visuels d’inspiration générés)
+
+Les images du dossier **`before-after/`** sont des visuels d’inspiration générés pour illustrer des possibilités d’aménagement. Elles ne doivent **pas** être présentées comme des réalisations clientes Atelier Guyonnet.
+
+Référencées dans **`lib/constants/before-after-images.ts`**. Les visuels « après » réutilisent les rendus **`inspirations/`** ; les « avant » sont dans **`before-after/`**.
+
+| Fichier | Chemin public | Comparaison |
+|--------|----------------|-------------|
+| `bibliotheque-avant.jpg` | `/images/before-after/bibliotheque-avant.jpg` | Bibliothèque murale |
+| `dressing-avant.jpg` | `/images/before-after/dressing-avant.jpg` | Dressing toute hauteur |
+| `meuble-tv-avant.jpg` | `/images/before-after/meuble-tv-avant.jpg` | Meuble TV avec rangements |
+| `placard-entree-avant.jpg` | `/images/before-after/placard-entree-avant.jpg` | Placard d’entrée intégré |
+| `cuisine-avant.png` | `/images/before-after/cuisine-avant.png` | Cuisine sur mesure |
+
+Les placeholders Unsplash `before-after-avant.jpg` / `before-after-apres.jpg` (dossier `placeholders/`) ne sont plus utilisés sur la landing.
+
+---
+
+## À propos (visuel d’ambiance atelier)
+
+`/images/about/artisan-atelier-decoupe-bois.png` est un visuel d’ambiance généré pour illustrer le savoir-faire artisanal et le travail du bois. Il ne doit **pas** être présenté comme une photo réelle de l’atelier ou de l’artisan Atelier Guyonnet.
+
+| Fichier | Chemin public | Section |
+|--------|----------------|---------|
+| `artisan-atelier-decoupe-bois.png` | `/images/about/artisan-atelier-decoupe-bois.png` | À propos |
 
 ---
 
@@ -32,9 +76,6 @@ Ces chemins restent la cible documentée pour les **photos maison** (non branch�
 | | |
 |---|---|
 | **Hero définitif** | `public/images/hero-atelier-guyonnet.jpg` → `/images/hero-atelier-guyonnet.jpg` |
-| **Inspirations définitives** | `public/images/inspirations/*.jpg` (dressing, placard-entree, bibliotheque, meuble-tv) |
-
-Pour passer des placeholders aux fichiers définitifs : mettre à jour **`placeholder-images.ts`** ou renommer les imports dans les composants concernés.
 
 ---
 

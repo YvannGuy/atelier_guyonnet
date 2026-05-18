@@ -63,6 +63,20 @@ html {
   html {
     scroll-behavior: smooth;
   }
+
+  .motion-hero-bg-image {
+    animation: hero-bg-zoom 22s ease-out forwards;
+    transform-origin: center center;
+  }
+}
+
+@keyframes hero-bg-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.04);
+  }
 }
 
 /* Carte zone d’intervention — Leaflet + tuiles OpenStreetMap (composant client, sans clé API). */

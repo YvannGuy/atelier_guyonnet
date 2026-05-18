@@ -158,6 +158,28 @@ export const SEO_SERVICE_PAGES: readonly SeoServicePageConfig[] = [
     canonicalPath: "/optimisation-petit-appartement-paris",
   },
   {
+    slug: "cuisine-sur-mesure-paris",
+    title: "Cuisine sur mesure Paris | Atelier Guyonnet",
+    metaDescription:
+      "Meubles de cuisine sur mesure à Paris et en Île-de-France. Atelier Guyonnet conçoit rangements, façades, colonnes et plans de travail pour optimiser votre cuisine sans rénovation complète.",
+    h1: "Cuisine sur mesure à Paris",
+    primaryKeyword: "cuisine sur mesure Paris",
+    secondaryKeywords: [
+      "cuisine sur mesure Île-de-France",
+      "meuble cuisine sur mesure Paris",
+      "agencement cuisine Paris",
+      "optimisation petite cuisine Paris",
+      "façades cuisine sur mesure",
+      "colonnes rangement cuisine",
+      "menuisier cuisine Paris",
+      "plan de travail sur mesure Paris",
+    ],
+    shortIntro:
+      "Structurer les linéaires, les colonnes et le plan de travail pour une cuisine plus rangée — périmètre menuiserie et agencement, pas rénovation technique clé en main.",
+    serviceType: "Cuisine sur mesure — agencement",
+    canonicalPath: "/cuisine-sur-mesure-paris",
+  },
+  {
     slug: "agencement-sur-mesure-ile-de-france",
     title: "Agencement sur mesure Île-de-France | Atelier Guyonnet",
     metaDescription:

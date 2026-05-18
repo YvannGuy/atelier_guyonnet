@@ -54,6 +54,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.85,
     },
     {
+      url: `${base}/cuisine-sur-mesure-paris`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
       url: `${base}/agencement-sur-mesure-ile-de-france`,
       lastModified: now,
       changeFrequency: "monthly",
