@@ -7,6 +7,7 @@ import { siteConfig } from "@/lib/constants/site";
 export const metadata: Metadata = {
   title: "Mentions légales",
   description: `Informations légales concernant le site ${siteConfig.name}.`,
+  alternates: { canonical: "/mentions-legales" },
 };
 
 export default function MentionsLegalesPage() {

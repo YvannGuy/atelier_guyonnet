@@ -1,3 +1,5 @@
+import { ServiceAreaMapDynamic } from "@/components/ui/ServiceAreaMapDynamic";
+
 const zones = [
   "Paris",
   "Hauts-de-Seine",
@@ -98,57 +100,28 @@ export function ServiceAreaSection() {
               ))}
             </ul>
 
-            <figure className="relative mt-8 overflow-hidden rounded-sm border border-border bg-background px-4 pb-6 pt-8 sm:px-6 sm:pt-10">
-              <figcaption className="sr-only">
-                Schéma stylisé : cercles concentriques autour de Paris, sans carte géographique réelle.
-              </figcaption>
-              <div className="relative mx-auto aspect-square max-w-[260px]">
-                <div
-                  className="absolute inset-0 rounded-full border border-border/40"
-                  aria-hidden
-                />
-                <div
-                  className="absolute inset-[14%] rounded-full border border-dashed border-border/60"
-                  aria-hidden
-                />
-                <div
-                  className="absolute inset-[28%] rounded-full border border-border/50"
-                  aria-hidden
-                />
-                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5">
-                  <span
-                    className="h-2 w-2 rounded-full border border-foreground/30 bg-foreground/85"
-                    aria-hidden
-                  />
-                  <span className="font-sans text-[10px] font-medium uppercase tracking-[0.22em] text-foreground">
-                    Paris
-                  </span>
-                </div>
-                <span
-                  className="absolute left-[8%] top-[42%] font-sans text-[9px] uppercase tracking-[0.14em] text-muted sm:text-[10px]"
-                  aria-hidden
-                >
-                  Petite couronne
-                </span>
-                <span
-                  className="absolute right-[6%] top-[30%] max-w-[5.5rem] text-right font-sans text-[9px] uppercase leading-snug tracking-[0.12em] text-muted sm:text-[10px]"
-                  aria-hidden
-                >
-                  IdF
-                  <br />
-                  selon projet
-                </span>
-                <span
-                  className="absolute bottom-[12%] left-1/2 -translate-x-1/2 font-sans text-[9px] uppercase tracking-[0.14em] text-muted sm:text-[10px]"
-                  aria-hidden
-                >
-                  Rayon indicatif
-                </span>
+            <div
+              className="relative mt-8 overflow-hidden rounded-md border border-border bg-background"
+              role="region"
+              aria-label="Carte indicative : Paris et île-de-France (OpenStreetMap)"
+            >
+              <div className="relative z-10 border-b border-border bg-secondary/25 px-4 py-3 sm:px-5">
+                <p className="font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-muted">
+                  Zone d’intervention indicative
+                </p>
+                <p className="mt-1 font-sans text-[11px] leading-relaxed text-muted/90">
+                  Cercle approximatif : les déplacements réels sont confirmés au cas par cas.
+                </p>
               </div>
-              <p className="mt-4 text-center font-sans text-[10px] uppercase tracking-[0.16em] text-muted">
-                Schéma éditorial — pas de carte ni de géolocalisation
+              <ServiceAreaMapDynamic />
+              <p className="border-t border-border bg-secondary/10 px-4 py-3 text-center font-sans text-[11px] leading-relaxed text-muted sm:px-5">
+                Zone indicative — les déplacements sont confirmés selon la localisation, la nature du
+                projet et les disponibilités de l’atelier.
               </p>
-            </figure>
+              <p className="border-t border-border px-4 py-2 text-center font-sans text-[9px] uppercase tracking-[0.12em] text-muted/85 sm:px-5">
+                Fonds de carte © contributeurs OpenStreetMap — attribution affichée sur la carte.
+              </p>
+            </div>
           </aside>
         </div>
       </div>

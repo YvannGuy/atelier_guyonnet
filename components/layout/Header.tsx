@@ -8,6 +8,7 @@ const navItems: HeaderNavItem[] = [
   { href: "#inspirations", label: "Inspirations" },
   { href: "#methode", label: "Méthode" },
   { href: "#apropos", label: "À propos" },
+  { href: "#faq", label: "FAQ" },
   { href: "#devis", label: "Devis" },
 ];
 

@@ -8,6 +8,7 @@ const quickLinks = [
   { href: "#inspirations", label: "Inspirations" },
   { href: "#methode", label: "Méthode" },
   { href: "#apropos", label: "À propos" },
+  { href: "#faq", label: "FAQ" },
   { href: "#devis", label: "Devis" },
 ] as const;
 
@@ -54,10 +55,10 @@ export function Footer() {
             <p className="mt-4 font-sans text-sm">
               <span className="block text-on-dark-muted">Email</span>
               <Link
-                href="mailto:contact@atelierguyonnet.com"
+                href={`mailto:${siteConfig.contactEmail}`}
                 className="focus-visible:ring-on-dark/80 mt-1 inline-block text-on-dark no-underline transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
               >
-                contact@atelierguyonnet.com
+                {siteConfig.contactEmail}
               </Link>
             </p>
             <p className="mt-4 font-sans text-sm">

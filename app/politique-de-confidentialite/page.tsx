@@ -7,6 +7,7 @@ import { siteConfig } from "@/lib/constants/site";
 export const metadata: Metadata = {
   title: "Politique de confidentialité",
   description: `Traitement des données personnelles et respect de la vie privée — ${siteConfig.name}.`,
+  alternates: { canonical: "/politique-de-confidentialite" },
 };
 
 export default function PolitiqueConfidentialitePage() {

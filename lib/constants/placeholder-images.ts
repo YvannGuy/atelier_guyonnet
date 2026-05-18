@@ -12,31 +12,31 @@ export const placeholderImages = {
     key: "hero",
     /** Chemin servi depuis `public/` */
     publicPath: "/images/placeholders/hero.jpg",
-    alt: "Intérieur lumineux et épuré avec mobilier chaleureux — ambiance d’inspiration, non liée à un chantier précis.",
+    alt: "Visuel d’inspiration — intérieur lumineux et épuré avec mobilier chaleureux (ambiance, pas une réalisation Atelier Guyonnet).",
     role: "Hero — image d’ambiance plein fond",
   },
   inspirationDressing: {
     key: "inspirationDressing",
     publicPath: "/images/placeholders/inspiration-dressing.jpg",
-    alt: "Composition d’armoires et rangements à portes — inspiration pour dressing sur mesure.",
+    alt: "Visuel d’inspiration — composition de dressings et armoires sur mesure (illustration, pas une réalisation Atelier Guyonnet).",
     role: "Inspirations — carte « Dressing toute hauteur »",
   },
   inspirationPlacardEntree: {
     key: "inspirationPlacardEntree",
     publicPath: "/images/placeholders/inspiration-placard-entree.jpg",
-    alt: "Couloir intérieur clair avec perspective sur pièce annexe — inspiration pour placard d’entrée intégré.",
+    alt: "Visuel d’inspiration — couloir clair et perspective intérieure pour un placard d’entrée intégré (illustration).",
     role: "Inspirations — carte « Placard d’entrée intégré »",
   },
   inspirationBibliotheque: {
     key: "inspirationBibliotheque",
     publicPath: "/images/placeholders/inspiration-bibliotheque.jpg",
-    alt: "Rayonnages et livres dans un espace de lecture — inspiration pour bibliothèque murale.",
+    alt: "Visuel d’inspiration — rayonnages et livres pour une bibliothèque murale sur mesure (illustration).",
     role: "Inspirations — carte « Bibliothèque murale »",
   },
   inspirationMeubleTv: {
     key: "inspirationMeubleTv",
     publicPath: "/images/placeholders/inspiration-meuble-tv.jpg",
-    alt: "Salon avec canapé cuir et mur soigné — inspiration pour meuble TV et rangements intégrés.",
+    alt: "Visuel d’inspiration — salon avec meuble TV et rangements intégrés (illustration, pas une réalisation atelier).",
     role: "Inspirations — carte « Meuble TV avec rangements »",
   },
   beforeAfterAvant: {

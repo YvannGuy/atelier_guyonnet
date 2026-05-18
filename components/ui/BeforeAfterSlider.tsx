@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useId, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 
 type BeforeAfterSliderProps = {
   beforeSrc: string;
@@ -11,8 +11,7 @@ type BeforeAfterSliderProps = {
 };
 
 /**
- * Slider avant / après — `input type="range"` natif (souris, tactile, clavier).
- * Image « après » superposée avec découpe selon la position ; image « avant » en fond.
+ * Slider avant / après : poignée et ligne sur l’image, drag souris/tactile + clavier (input range masqué).
  */
 export function BeforeAfterSlider({
   beforeSrc,
@@ -21,30 +20,87 @@ export function BeforeAfterSlider({
   afterAlt,
 }: BeforeAfterSliderProps) {
   const [position, setPosition] = useState(50);
+  const draggingRef = useRef(false);
+  const frameRef = useRef<HTMLDivElement>(null);
   const rangeId = useId();
   const clipRight = 100 - position;
 
+  const setFromClientX = useCallback((clientX: number) => {
+    const el = frameRef.current;
+    if (!el) return;
+    const { left, width } = el.getBoundingClientRect();
+    if (width <= 0) return;
+    const p = ((clientX - left) / width) * 100;
+    setPosition(Math.round(Math.min(100, Math.max(0, p)) * 1000) / 1000);
+  }, []);
+
+  const onPointerDownFrame = (e: React.PointerEvent) => {
+    frameRef.current?.setPointerCapture(e.pointerId);
+    draggingRef.current = true;
+    setFromClientX(e.clientX);
+  };
+
+  const onPointerMoveFrame = (e: React.PointerEvent) => {
+    if (!draggingRef.current) return;
+    setFromClientX(e.clientX);
+  };
+
+  const endDrag = (e: React.PointerEvent) => {
+    draggingRef.current = false;
+    if (frameRef.current?.hasPointerCapture?.(e.pointerId)) {
+      frameRef.current.releasePointerCapture(e.pointerId);
+    }
+  };
+
+  const onLostPointerCapture = () => {
+    draggingRef.current = false;
+  };
+
   return (
-    <div className="relative overflow-hidden rounded-md border border-border bg-background">
+    <div className="overflow-hidden rounded-md border border-border bg-background">
       <div
-        className="relative aspect-16/11 min-h-[200px] w-full sm:aspect-16/10 sm:min-h-[240px] md:min-h-[280px]"
-        role="region"
+        ref={frameRef}
+        className="relative aspect-16/11 min-h-[200px] w-full cursor-ew-resize touch-pan-y sm:aspect-16/10 sm:min-h-[240px] md:min-h-[280px]"
+        role="group"
         aria-label="Comparaison avant et après. Visuels d’ambiance, pas un chantier réel."
+        onPointerDown={onPointerDownFrame}
+        onPointerMove={onPointerMoveFrame}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onLostPointerCapture={onLostPointerCapture}
       >
         <span className="sr-only">
           {beforeAlt} {afterAlt}
         </span>
+
+        {/* Contrôle clavier : range invisible, hors flux visuel */}
+        <input
+          id={rangeId}
+          type="range"
+          min={0}
+          max={100}
+          step={1}
+          value={position}
+          onChange={(e) => setPosition(Number(e.target.value))}
+          aria-label="Comparer l’avant et l’après : flèches gauche et droite pour déplacer la séparation."
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(position)}
+          tabIndex={0}
+          className="sr-only"
+        />
 
         <Image
           src={beforeSrc}
           alt={beforeAlt}
           fill
           sizes="(min-width: 896px) 56rem, 100vw"
-          className="object-cover object-center"
+          className="pointer-events-none object-cover object-center"
+          draggable={false}
           priority={false}
         />
         <div
-          className="absolute inset-0 z-10 overflow-hidden"
+          className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
           style={{ clipPath: `inset(0 ${clipRight}% 0 0)` }}
           aria-hidden
         >
@@ -54,6 +110,7 @@ export function BeforeAfterSlider({
             fill
             sizes="(min-width: 896px) 56rem, 100vw"
             className="object-cover object-[center_40%]"
+            draggable={false}
             aria-hidden
           />
         </div>
@@ -64,17 +121,18 @@ export function BeforeAfterSlider({
         />
 
         <div
-          className="pointer-events-none absolute bottom-0 top-0 z-20 w-px bg-foreground/30"
+          className="pointer-events-none absolute bottom-0 top-0 z-20 w-px bg-foreground/40 [box-shadow:1px_0_0_color-mix(in_srgb,var(--ag-background-light)_45%,transparent)]"
           style={{ left: `${position}%`, transform: "translateX(-50%)" }}
           aria-hidden
         />
+
         <div
-          className="pointer-events-none absolute left-1/2 z-20 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/95 shadow-sm sm:h-10 sm:w-10"
+          className="absolute z-30 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none items-center justify-center rounded-full border border-border bg-background/95 shadow-md sm:h-12 sm:w-12"
           style={{ left: `${position}%`, top: "50%" }}
           aria-hidden
         >
-          <span className="font-sans text-[10px] font-medium tabular-nums tracking-[0.12em] text-muted">
-            ‹›
+          <span className="font-sans text-[11px] font-medium tabular-nums tracking-[0.12em] text-muted">
+            ‹ ›
           </span>
         </div>
 
@@ -84,37 +142,11 @@ export function BeforeAfterSlider({
         <span className="pointer-events-none absolute right-3 top-3 z-20 rounded-sm border border-border/80 bg-background/90 px-2 py-1 font-sans text-[10px] font-medium uppercase tracking-[0.18em] text-foreground sm:right-4 sm:top-4">
           Après
         </span>
-
-        <p className="pointer-events-none absolute bottom-3 left-1/2 z-20 max-w-[95%] -translate-x-1/2 px-2 text-center font-sans text-[10px] uppercase tracking-[0.18em] text-muted sm:bottom-4">
-          Illustration d’ambiance — pas un avant/après réel
-        </p>
       </div>
 
-      <div className="border-t border-border bg-background px-4 py-3 sm:px-5">
-        <label
-          htmlFor={rangeId}
-          className="mb-2 block font-sans text-[11px] font-medium uppercase tracking-[0.14em] text-muted"
-        >
-          Comparer l’avant et l’après
-        </label>
-        <input
-          id={rangeId}
-          type="range"
-          min={0}
-          max={100}
-          value={position}
-          onChange={(e) => setPosition(Number(e.target.value))}
-          aria-label="Comparer l’avant et l’après : ajuster pour révéler davantage la vue après."
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={position}
-          className="quote-slider-range h-4 w-full cursor-ew-resize touch-manipulation"
-        />
-        <div className="mt-2 flex justify-between font-sans text-[10px] uppercase tracking-[0.16em] text-muted">
-          <span>Plus « avant »</span>
-          <span>Plus « après »</span>
-        </div>
-      </div>
+      <p className="border-t border-border bg-secondary/10 px-4 py-3 text-center font-sans text-[10px] uppercase tracking-[0.18em] text-muted sm:px-5">
+        Illustration d’ambiance — pas un avant/après réel
+      </p>
     </div>
   );
 }

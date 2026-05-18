@@ -269,20 +269,6 @@ export function QuoteFormSection() {
                 />
               </div>
 
-              <div className="rounded-md border border-border bg-secondary/20 px-4 py-4 sm:px-5 sm:py-5">
-                <p className="font-sans text-[11px] font-medium uppercase tracking-[0.16em] text-muted">
-                  Photos de l’espace
-                </p>
-                <p className="mt-3 font-sans text-sm leading-relaxed text-foreground md:text-base">
-                  L’ajout de photos sera disponible prochainement. Pour l’instant, vous pourrez nous les
-                  transmettre par e-mail après le premier échange.
-                </p>
-                <p className="mt-3 font-sans text-sm leading-relaxed text-muted">
-                  Des photos de l’espace permettent de mieux comprendre les dimensions, les contraintes et
-                  les possibilités d’aménagement.
-                </p>
-              </div>
-
               <button
                 type="submit"
                 disabled={isPending}

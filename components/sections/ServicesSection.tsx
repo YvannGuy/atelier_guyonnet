@@ -1,3 +1,7 @@
+import Link from "next/link";
+
+import { SEO_SERVICE_PAGES } from "@/lib/constants/seo-pages";
+
 type ServiceItem = {
   title: string;
   description: string;
@@ -43,6 +47,8 @@ const services: ServiceItem[] = [
   },
 ];
 
+const upcomingServiceLabels = SEO_SERVICE_PAGES.slice(0, 3).map((p) => p.serviceType);
+
 export function ServicesSection() {
   return (
     <section
@@ -66,6 +72,24 @@ export function ServicesSection() {
             d’une étude et d’une fabrication adaptée à votre pièce — pas à un module catalogue.
           </p>
         </div>
+
+        <p className="mt-10 max-w-2xl font-sans text-sm leading-relaxed text-muted md:text-base">
+          Des pages détaillées par type de projet — notamment{" "}
+          {upcomingServiceLabels.map((label, i) => (
+            <span key={label}>
+              {i > 0 ? (i === upcomingServiceLabels.length - 1 ? " et " : ", ") : ""}
+              <strong className="font-medium text-foreground">{label}</strong>
+            </span>
+          ))}{" "}
+          — seront publiées progressivement. En attendant, décrivez votre besoin via le{" "}
+          <Link
+            href="#devis"
+            className="text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground/40"
+          >
+            formulaire de devis
+          </Link>
+          .
+        </p>
 
         <ul className="mt-14 grid min-w-0 list-none gap-4 sm:mt-16 sm:grid-cols-2 sm:gap-5 lg:mt-20 lg:grid-cols-3 lg:gap-6">
           {services.map((item, index) => (

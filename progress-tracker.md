@@ -2,23 +2,106 @@
 
 ## Phase actuelle
 
-**Correctifs UX** : bloc « Photos » clarifié (aucun upload, copy premium) ; **ServiceAreaSection** plus concrète + schéma éditoriel Paris / couronnes ; **BeforeAfterSlider** interactif (`input range` natif, sans lib). Styles curseur dans `globals.css`. **Aucune nouvelle dépendance.** L’envoi devis via Resend (lot précédent) est **inchangé** — pas de branchement upload ni nouveau backend.
+**Fondation SEO (phase 1)** : `robots.txt` + `sitemap.xml` (home + légal uniquement), métadonnées **title / description / canonical / Open Graph / Twitter** affinées (`app/layout.tsx`, `app/page.tsx`, pages légales), **JSON-LD** sur l’accueil (`ProfessionalService`, `Service` ×6, `FAQPage` — sans garantie d’affichage dans les IA), section **FAQ** (`#faq`) + liens header/footer, **maillage** services → devis + annonce des prochaines pages thématiques (`lib/constants/seo-pages.ts` + paragraphe dans `ServicesSection`), **alts** placeholders reformulés en *visuels d’inspiration*. **`NEXT_PUBLIC_SITE_URL`** à fixer en prod pour canonicals/JSON-LD absolus corrects.
 
 ## Objectif court terme
 
-**Upload photos** ou envoi par lien ; affiner **Resend** prod ; **remplacer** placeholders visuels.
+Publier les **3 premières pages services** (`/dressing-sur-mesure-paris`, `/placard-sur-mesure-paris`, `/rangement-sur-mesure-paris`) avec contenu unique ; puis fusionner leurs URL dans le sitemap (`getFutureSeoPaths` déjà prévu côté constantes).
 
 ## Prochaine étape
 
-1. Activer l’envoi de fichiers ou processus e-mail pour les photos.
-2. Finaliser domaine / `RESEND_FROM_EMAIL`.
-3. Itérer sur le schéma zone d’intervention si retours terrain.
+1. Déployer avec **`NEXT_PUBLIC_SITE_URL`** = URL production (Vercel).
+2. Implémenter **/dressing-sur-mesure-paris** puis les deux autres services prioritaires.
+3. Remplacer progressivement l’image OG / hero par un visuel maison si besoin.
 
 ## Questions ouvertes
 
 - **Stockage fichiers** : Blob, lien cloud, ou e-mail uniquement.
 - **Contenu juridique** : affiner avec un professionnel si besoin.
 - **Tracking** : analytics ou non au MVP.
+
+## Dernière livraison — Fondation SEO technique + calendrier éditorial (2026-05-16)
+
+### Fait
+
+- **`app/robots.ts`** : crawl autorisé, `sitemap` pointant vers `/sitemap.xml`.
+- **`app/sitemap.ts`** : `/`, `/mentions-legales`, `/politique-de-confidentialite` uniquement (pas d’URL fantôme) ; commentaire pour fusion future avec `getFutureSeoPaths()`.
+- **`lib/constants/site.ts`** : titre SEO accueil, **e-mail** public, `defaultOgImage`, `sameAs` vide (extensible).
+- **`app/layout.tsx` + `app/page.tsx`** : template titre, OG + Twitter avec image locale, **canonical** accueil `/` ; mention robots/googleBot.
+- **Mentions / politique** : **`alternates.canonical`** par route.
+- **`components/seo/HomeJsonLd.tsx`** : `@graph` — `ProfessionalService` (adresse Paris/IdF sans rue ni téléphone inventés), 6 × `Service`, `FAQPage` (questions/réponses factuelles, sans promesse d’indexation IA).
+- **`lib/constants/home-faq.ts`** + **`components/sections/FaqSection.tsx`** (`#faq`) : 5 questions brief ; lien vers `#devis`.
+- **`lib/constants/seo-pages.ts`** : inventaire **8 services** + **12 zones** (contenus différenciés), `getFutureSeoPaths`.
+- **`ServicesSection`** : paragraphe **lien interne** `#devis` + annonce pages à venir (3 premières entrées du config).
+- **`Header` / `Footer`** : entrée **FAQ** ; mailto depuis `siteConfig.contactEmail`.
+- **`lib/constants/placeholder-images.ts`** : alts explicites *visuel d’inspiration*, pas réalisation atelier.
+
+### Validations
+
+- `npm run build` : **OK** ; routes **`/robots.txt`**, **`/sitemap.xml`** générées.
+
+### Limites
+
+- **Aucune garantie** de rich results / citations ChatGPT, Perplexity, etc.
+- **URL prod** : sans `NEXT_PUBLIC_SITE_URL`, canonicals et JSON-LD peuvent rester sur `localhost` en dev — **à définir en production**.
+- **Pas de téléphone ni SIRET** dans les schémas (conforme consigne).
+- Pages **seo-pages** non routées : pas de contenu dupliqué en ligne pour l’instant.
+
+### Fichiers touchés / créés
+
+- `app/robots.ts`, `app/sitemap.ts`, `app/layout.tsx`, `app/page.tsx`
+- `app/mentions-legales/page.tsx`, `app/politique-de-confidentialite/page.tsx`
+- `components/seo/HomeJsonLd.tsx`, `components/sections/FaqSection.tsx`
+- `components/sections/ServicesSection.tsx`, `components/layout/Header.tsx`, `components/layout/Footer.tsx`
+- `lib/constants/site.ts`, `lib/constants/home-faq.ts`, `lib/constants/seo-pages.ts`, `lib/constants/placeholder-images.ts`
+- `progress-tracker.md`
+
+### Prochaine étape notée (hors périmètre)
+
+Créer **une par une** : `/dressing-sur-mesure-paris`, `/placard-sur-mesure-paris`, `/rangement-sur-mesure-paris`, puis étendre le **sitemap**.
+
+---
+
+## Dernière livraison — Formulaire épuré, slider sur image, carte OSM (2026-05-16)
+
+### Fait
+
+- **`QuoteFormSection`** : suppression **totale** du bloc « Photos de l’espace » (aucun fichier, aucun texte « prochainement »). Champs conservés : nom, e-mail, téléphone, ville, type, dimensions, budget, délai, message + **Envoyer ma\u00A0demande**. Correction du JSX du **`<button>`** submit (balise ouverte manquante après un retrait de bloc).
+- **`BeforeAfterSlider`** : comparaison **directement sur l’image** — couche « après » avec `clip-path: inset`, ligne verticale + poignée ronde, **souris / tactile** (`setPointerCapture`, `onLostPointerCapture`), **`input type="range"` en `sr-only`** pour le **clavier** ; légende sous le bloc : *Illustration d’ambiance — pas un avant/après réel* ; pastilles **Avant** / **Après** sur l’image.
+- **`ServiceAreaSection`** : remplacement du schéma abstrait par un bloc carte premium (entête *Zone d’intervention indicative*, disclaimer zone / disponibilités, rappel attribution OSM).
+- **`ServiceAreaMap`** (`components/ui/`) : client Leaflet — `MapContainer`, tuiles OSM, **cercle ~40 km**, marqueur **Paris** (`L.divIcon`), `Popup` indicatif ; `import "leaflet/dist/leaflet.css"`.
+- **`ServiceAreaMapDynamic`** : client + `next/dynamic(..., { ssr: false })` pour respecter Next 16 (la section reste un Server Component).
+- **`app/globals.css`** : styles **Leaflet** (hauteur mobile/desktop, cercle `.ag-map-idf-zone`, marqueur `.ag-paris-marker`, attribution) ; **suppression** des anciennes règles `.quote-slider-range`.
+
+### Validations
+
+- `npm run build` : **OK** (Next.js 16.2.6).
+
+### Limites
+
+- Carte : chargement **client uniquement** ; tuiles **tierces** OpenStreetMap (pas de clé, pas de cookies ajoutés par nous) — conformité RGPD / performance selon usage réel à valider côté projet.
+- Slider : le **focus clavier** arrive sur le `range` masqué (Tab depuis le groupe) ; pas d’indication visuelle de focus sur la poignée sans surcharger l’UI.
+- Cercle sur la carte : **indicatif**, pas cadastre ni engagement de rayon d’intervention.
+
+### Fichiers modifiés / créés
+
+- `components/sections/QuoteFormSection.tsx`
+- `components/ui/BeforeAfterSlider.tsx`
+- `components/sections/ServiceAreaSection.tsx`
+- `components/ui/ServiceAreaMap.tsx` (créé)
+- `components/ui/ServiceAreaMapDynamic.tsx` (créé — contrainte Next 16)
+- `app/globals.css`
+- `progress-tracker.md`
+
+### Dépendances npm (lot carte)
+
+- `leaflet`, `react-leaflet`, devDependency `@types/leaflet`.
+
+### Prochaine étape notée (non implémentée)
+
+Parcours **photos** (upload ou lien) si produit ; affinage **Resend** prod ; remplacement **placeholders** visuels.
+
+---
 
 ## Dernière livraison — UX formulaire photos, zone d’intervention, slider avant/après (2026-05-18)
 
@@ -276,5 +359,7 @@ Après validation visuelle : **remplacer progressivement les placeholders visuel
 | 2026-05-16 | **README** `public/images/` + vérif chemins visuels, build OK |
 | 2026-05-16 | **Pages légales** `/mentions-legales` + `/politique-de-confidentialite`, build OK |
 | 2026-05-16 | **Placeholders Unsplash** locaux + `placeholder-images.ts` + `next/image`, build OK |
+| 2026-05-16 | **SEO** fondation (robots, sitemap, JSON-LD, FAQ, seo-pages.ts), build OK |
+| 2026-05-16 | **UX** formulaire sans photos + slider sur image + carte Leaflet OSM, build OK |
 | 2026-05-18 | **Formulaire devis** + Resend (Server Action), build OK |
 | 2026-05-18 | **UX** photos + zone intervention + slider avant/après, build OK |
