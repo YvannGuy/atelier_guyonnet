@@ -20,6 +20,36 @@
 - **Contenu juridique** : affiner avec un professionnel si besoin.
 - **Tracking** : analytics ou non au MVP.
 
+## Dernière livraison — Micro-interactions hover section Méthode (2026-05-18)
+
+### Fait
+
+- **Desktop** (`lg+`) : hover CSS premium sur chaque étape 01→05 de la frise horizontale.
+- **Numéro** : contraste renforcé (`text-muted` → `text-foreground`).
+- **Trait vertical** : hauteur accrue + teinte plus marquée ; filet horizontal local au junction.
+- **Titre** : remontée subtile (`-translate-y-1`, ~4 px).
+- **Paragraphe** : lisibilité légèrement accrue (`text-foreground/80`).
+- **Zone étape** : fond `bg-secondary/10` + bordure fine `border-border` au survol.
+- **Transitions** : 300 ms, `ease-out`, tokens existants uniquement.
+- **`prefers-reduced-motion`** : transitions et transform désactivées.
+- **Mobile** : inchangé (timeline verticale + GSAP scroll existant).
+- **GSAP** : non modifié pour le hover (CSS/Tailwind `group` / `group-hover`).
+
+### Validations
+
+- `npm run build` : OK.
+
+### Fichiers modifiés
+
+- `components/sections/ProcessSection.tsx`
+- `progress-tracker.md`
+
+### Limite restante
+
+- Tester le rendu hover sur desktop réel et vérifier le confort mobile (pas de hover parasite).
+
+---
+
 ## Dernière livraison — Audit performance post-GSAP (2026-05-18)
 
 ### Audit effectué
@@ -1076,3 +1106,4 @@ Après validation visuelle : **remplacer progressivement les placeholders visuel
 | 2026-05-16 | **UX** formulaire sans photos + slider sur image + carte Leaflet OSM, build OK |
 | 2026-05-18 | **Formulaire devis** + Resend (Server Action), build OK |
 | 2026-05-18 | **UX** photos + zone intervention + slider avant/après, build OK |
+| 2026-05-18 | **Méthode** : micro-interactions hover desktop (CSS) sur étapes 01→05, build OK |

@@ -9,6 +9,9 @@ type ProcessStep = {
 const intro =
   "Chaque projet commence par une écoute attentive de vos besoins, puis avance étape par étape : mesures, proposition, fabrication et pose. L’objectif est de créer une solution adaptée à votre intérieur, sans approximation.";
 
+const desktopStepItemClass =
+  "group relative flex min-w-0 flex-col rounded-sm border border-transparent px-3 py-4 pt-2 transition-[background-color,border-color] duration-300 ease-out hover:border-border hover:bg-secondary/10 motion-reduce:transition-none";
+
 const steps: ProcessStep[] = [
   {
     title: "Échange sur votre besoin",
@@ -96,15 +99,21 @@ export function ProcessSection() {
 
           <ol className="grid grid-cols-5 gap-4 xl:gap-6">
             {steps.map((step, index) => (
-              <li key={step.title} data-process-step className="flex min-w-0 flex-col pt-2">
-                <span className="font-sans text-[11px] font-medium tabular-nums tracking-[0.22em] text-muted">
+              <li key={step.title} data-process-step className={desktopStepItemClass}>
+                <span
+                  className="font-sans text-[11px] font-medium tabular-nums tracking-[0.22em] text-muted transition-colors duration-300 ease-out group-hover:text-foreground motion-reduce:transition-none"
+                  aria-hidden
+                >
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <div className="mt-6 h-3 w-px bg-border" aria-hidden />
-                <h3 className="mt-4 font-serif text-base leading-snug text-foreground xl:text-lg">
+                <div className="relative mt-6" aria-hidden>
+                  <div className="h-3 w-px bg-border transition-[height,background-color] duration-300 ease-out group-hover:h-6 group-hover:bg-foreground/70 motion-reduce:transition-none motion-reduce:group-hover:h-3" />
+                  <span className="pointer-events-none absolute top-0 left-0 h-px w-0 bg-border transition-[width,background-color] duration-300 ease-out group-hover:w-5 group-hover:bg-foreground/40 motion-reduce:transition-none motion-reduce:group-hover:w-0" />
+                </div>
+                <h3 className="mt-4 font-serif text-base leading-snug text-foreground transition-transform duration-300 ease-out group-hover:-translate-y-1 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 xl:text-lg">
                   {step.title}
                 </h3>
-                <p className="mt-3 font-sans text-sm leading-relaxed text-muted">
+                <p className="mt-3 font-sans text-sm leading-relaxed text-muted transition-colors duration-300 ease-out group-hover:text-foreground/80 motion-reduce:transition-none">
                   {step.description}
                 </p>
               </li>

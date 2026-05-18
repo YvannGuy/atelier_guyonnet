@@ -2,8 +2,7 @@
 
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 
-import { ensureScrollTrigger } from "@/components/motion/gsap-client";
-import { afterLayout, isElementVisible } from "@/components/motion/motion-dom";
+import { createVisibleScrollScope } from "@/components/motion/motion-dom";
 import { MOTION } from "@/components/motion/motion-config";
 import { prefersReducedMotion } from "@/components/motion/prefers-reduced-motion";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
@@ -23,19 +22,16 @@ export function InspirationReveal({ children, className }: InspirationRevealProp
   useLayoutEffect(() => {
     if (prefersReducedMotion() || reducedMotion) return;
 
-    let ctx: { revert: () => void } | undefined;
-    let cancelled = false;
+    return createVisibleScrollScope(
+      () => ref.current,
+      (gsapInstance) => {
+        const root = ref.current;
+        if (!root) return;
 
-    const cancelAfterLayout = afterLayout(() => {
-      const root = ref.current;
-      if (cancelled || !root || !isElementVisible(root)) return;
+        const figure = root.querySelector<HTMLElement>("[data-inspiration-figure]");
+        const caption = root.querySelector<HTMLElement>("[data-inspiration-caption]");
+        const copy = root.querySelector<HTMLElement>("[data-inspiration-copy]");
 
-      const figure = root.querySelector<HTMLElement>("[data-inspiration-figure]");
-      const caption = root.querySelector<HTMLElement>("[data-inspiration-caption]");
-      const copy = root.querySelector<HTMLElement>("[data-inspiration-copy]");
-
-      const gsapInstance = ensureScrollTrigger();
-      ctx = gsapInstance.context(() => {
         const tl = gsapInstance.timeline({
           scrollTrigger: {
             trigger: root,
@@ -75,14 +71,9 @@ export function InspirationReveal({ children, className }: InspirationRevealProp
             "-=0.15",
           );
         }
-      }, root);
-    });
-
-    return () => {
-      cancelled = true;
-      cancelAfterLayout();
-      ctx?.revert();
-    };
+      },
+      { deferFrame: true },
+    );
   }, [reducedMotion]);
 
   return (

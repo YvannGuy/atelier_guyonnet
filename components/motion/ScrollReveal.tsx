@@ -2,8 +2,7 @@
 
 import { useLayoutEffect, useRef, type ElementType, type ReactNode } from "react";
 
-import { ensureScrollTrigger } from "@/components/motion/gsap-client";
-import { afterLayout, isElementVisible } from "@/components/motion/motion-dom";
+import { createVisibleScrollScope } from "@/components/motion/motion-dom";
 import { MOTION } from "@/components/motion/motion-config";
 import { prefersReducedMotion } from "@/components/motion/prefers-reduced-motion";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
@@ -24,15 +23,12 @@ export function ScrollReveal({ children, className, as: Tag = "div" }: ScrollRev
   useLayoutEffect(() => {
     if (prefersReducedMotion() || reducedMotion) return;
 
-    let ctx: { revert: () => void } | undefined;
-    let cancelled = false;
+    return createVisibleScrollScope(
+      () => ref.current,
+      (gsapInstance) => {
+        const el = ref.current;
+        if (!el) return;
 
-    const cancelAfterLayout = afterLayout(() => {
-      const el = ref.current;
-      if (cancelled || !el || !isElementVisible(el)) return;
-
-      const gsapInstance = ensureScrollTrigger();
-      ctx = gsapInstance.context(() => {
         gsapInstance.from(el, {
           y: MOTION.offset.revealY,
           opacity: 0,
@@ -45,14 +41,9 @@ export function ScrollReveal({ children, className, as: Tag = "div" }: ScrollRev
             invalidateOnRefresh: true,
           },
         });
-      }, el);
-    });
-
-    return () => {
-      cancelled = true;
-      cancelAfterLayout();
-      ctx?.revert();
-    };
+      },
+      { deferFrame: true },
+    );
   }, [reducedMotion]);
 
   return (

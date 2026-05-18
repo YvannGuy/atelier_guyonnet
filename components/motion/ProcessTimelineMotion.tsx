@@ -2,8 +2,7 @@
 
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 
-import { ensureScrollTrigger } from "@/components/motion/gsap-client";
-import { afterLayout, isElementVisible } from "@/components/motion/motion-dom";
+import { createVisibleScrollScope } from "@/components/motion/motion-dom";
 import { MOTION } from "@/components/motion/motion-config";
 import { prefersReducedMotion } from "@/components/motion/prefers-reduced-motion";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
@@ -29,18 +28,15 @@ export function ProcessTimelineMotion({
   useLayoutEffect(() => {
     if (prefersReducedMotion() || reducedMotion) return;
 
-    let ctx: { revert: () => void } | undefined;
-    let cancelled = false;
+    return createVisibleScrollScope(
+      () => ref.current,
+      (gsapInstance) => {
+        const root = ref.current;
+        if (!root) return;
 
-    const cancelAfterLayout = afterLayout(() => {
-      const root = ref.current;
-      if (cancelled || !root || !isElementVisible(root)) return;
+        const line = root.querySelector<HTMLElement>("[data-process-line]");
+        const steps = root.querySelectorAll<HTMLElement>("[data-process-step]");
 
-      const line = root.querySelector<HTMLElement>("[data-process-line]");
-      const steps = root.querySelectorAll<HTMLElement>("[data-process-step]");
-
-      const gsapInstance = ensureScrollTrigger();
-      ctx = gsapInstance.context(() => {
         const tl = gsapInstance.timeline({
           scrollTrigger: {
             trigger: root,
@@ -72,14 +68,9 @@ export function ProcessTimelineMotion({
             line ? "-=0.55" : 0,
           );
         }
-      }, root);
-    });
-
-    return () => {
-      cancelled = true;
-      cancelAfterLayout();
-      ctx?.revert();
-    };
+      },
+      { deferFrame: true },
+    );
   }, [reducedMotion, variant]);
 
   return (

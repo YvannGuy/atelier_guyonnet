@@ -8,8 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { ensureScrollTrigger } from "@/components/motion/gsap-client";
-import { afterLayout, isElementVisible } from "@/components/motion/motion-dom";
+import { createVisibleScrollScope } from "@/components/motion/motion-dom";
 import { MOTION } from "@/components/motion/motion-config";
 import { prefersReducedMotion } from "@/components/motion/prefers-reduced-motion";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
@@ -40,18 +39,15 @@ export function StaggerReveal<T extends ElementType = "div">({
   useLayoutEffect(() => {
     if (prefersReducedMotion() || reducedMotion) return;
 
-    let ctx: { revert: () => void } | undefined;
-    let cancelled = false;
+    return createVisibleScrollScope(
+      () => ref.current,
+      (gsapInstance) => {
+        const root = ref.current;
+        if (!root) return;
 
-    const cancelAfterLayout = afterLayout(() => {
-      const root = ref.current;
-      if (cancelled || !root || !isElementVisible(root)) return;
+        const items = root.querySelectorAll<HTMLElement>(itemSelector);
+        if (!items.length) return;
 
-      const items = root.querySelectorAll<HTMLElement>(itemSelector);
-      if (!items.length) return;
-
-      const gsapInstance = ensureScrollTrigger();
-      ctx = gsapInstance.context(() => {
         gsapInstance.from(items, {
           y: MOTION.offset.revealY,
           opacity: 0,
@@ -65,14 +61,9 @@ export function StaggerReveal<T extends ElementType = "div">({
             invalidateOnRefresh: true,
           },
         });
-      }, root);
-    });
-
-    return () => {
-      cancelled = true;
-      cancelAfterLayout();
-      ctx?.revert();
-    };
+      },
+      { deferFrame: true },
+    );
   }, [reducedMotion, itemSelector, stagger]);
 
   return (
